@@ -1,6 +1,6 @@
 {
   "name": "@softtor/create-bunnest",
-  "version": "0.1.2",
+  "version": "0.5.0",
   "description": "Scaffold a NestJS project that runs on the Bun runtime: bunx @softtor/create-bunnest my-api",
   "license": "MIT",
   "type": "module",

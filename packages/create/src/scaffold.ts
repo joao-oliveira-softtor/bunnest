@@ -28,7 +28,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 export const templatesDir = resolve(here, '..', 'templates');
 
 /** Version range of @softtor/bunnest-platform written into generated projects. */
-export const PLATFORM_VERSION = '^0.1.0';
+export const PLATFORM_VERSION = '^0.5.0';
 
 export async function scaffold(options: ScaffoldOptions): Promise<ScaffoldResult> {
   const dir = resolve(options.dir);
