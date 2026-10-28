@@ -1,0 +1,51 @@
+---
+title: Compatibility
+description: NestJS Bun compatibility table. Which Nest features and ecosystem packages (swagger, testing, SSE, static files) work on the nestbun adapter.
+---
+
+Every ✅ row has an integration test in `packages/platform/test` that boots a real Nest app on the adapter.
+
+## NestJS features
+
+| Feature | Status |
+|---|---|
+| Routing, params, wildcards, `@All`, HEAD → GET fallback | ✅ |
+| `@Body` / `@Query` / `@Param` / `@Headers` / `@Ip` / `@Req` / `@Res` / `@Next` | ✅ |
+| JSON + urlencoded parsing, `rawBody`, `bodyParser: false`, `useBodyParser('text' \| 'raw')`, 413 limits | ✅ |
+| Exception filters, 404 / 500 shapes identical to Express | ✅ |
+| Nest middleware (`MiddlewareConsumer`, `forRoutes`, `exclude`, method-scoped), `app.use()`, `next(err)` | ✅ |
+| Global prefix with `exclude`; URI / header / media-type / custom versioning | ✅ |
+| CORS (`app.enableCors`) | ✅ |
+| `@Redirect`, `@Header`, `@HttpCode`, `res.cookie()` / `clearCookie()`, `setCookie` | ✅ |
+| Server-Sent Events with disconnect detection | ✅ |
+| `StreamableFile`, manual `res.write()` streaming | ✅ |
+| Static assets with ETag / Last-Modified / 304 | ✅ |
+| View engines: `ejs`, `hbs`, `pug`, custom `render()` | ✅ |
+| `httpsOptions`, `forceCloseConnections`, `return503OnClosing`, graceful shutdown | ✅ |
+| Unix socket listen | ✅ |
+| Security hooks (`useSecurityHeaders`, `enableCsrfProtection`) | ✅ via `AbstractHttpAdapter` |
+| `trustProxy` (`req.ip`, `req.ips`, `req.protocol`, `req.host` via `X-Forwarded-*`) | ✅ |
+| WebSocket gateways | ✅ [`@nestbun/ws`](../websockets/) (`BunWsAdapter`: one path per gateway, `{ event, data }` messages, pub/sub rooms, `messageParser`) |
+| Socket.IO gateways | ✅ [`@nestbun/socket.io`](../websockets/#socketio) (`BunIoAdapter`: namespaces, rooms, acks, middleware, `websocket` and `polling` on the HTTP port) |
+| Multipart via the `@UploadedFile()` decorator | ⏳ planned |
+| Multipart via `req.native.formData()` (Web `Request`, limit via `serve.maxRequestBodySize`) | ✅ |
+
+## Ecosystem packages
+
+| Package | Status |
+|---|---|
+| `@nestjs/testing` | ✅ `createNestApplication(new BunAdapter())` |
+| `@nestjs/swagger` | ✅ UI, JSON, YAML and assets |
+| `@nestjs/throttler` | ✅ `ThrottlerGuard`, `X-RateLimit-*` / `Retry-After` headers, `@SkipThrottle()` |
+| `@nestjs/terminus` | ✅ `@HealthCheck()`: 200 when up, 503 with details when down |
+| `@nestjs/passport` + `passport-jwt` | ✅ `AuthGuard('jwt')`, `req.user` |
+| `helmet` | ✅ `app.use(helmet())` |
+| `cookie-parser` | ✅ `app.use(cookieParser(secret))`, `req.cookies` / `req.signedCookies` |
+| `cors` | ✅ used internally |
+| `@nestjs/serve-static` | ⚠️ untested; use `useStaticAssets` |
+| `@nestjs/platform-socket.io`, `@nestjs/platform-ws` | ❌ attach to a Node server (the adapter logs a warning when one does); use `BunWsAdapter` from `@nestbun/ws` and `BunIoAdapter` from `@nestbun/socket.io` instead |
+| `supertest` | ❌ use `adapter.fetch()` |
+| `multer` / `@nestjs/platform-express` interceptors | ❌ Express-only |
+| Arbitrary Express middleware | ⚠️ see [Differences from Express](../differences-from-express/) |
+
+Found something missing? [Open an issue](https://github.com/mguay22/nestbun/issues) with a minimal controller.
