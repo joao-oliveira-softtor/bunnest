@@ -5,7 +5,7 @@
  * at the new adapter (PLATFORM_VERSION, only when @softtor/create-bunnest is released too),
  * commits, tags vX.Y.Z and, after a confirmation,
  * pushes. The pushed tag triggers the Release workflow, which publishes to npm (it needs
- * the NPM_TOKEN repository secret) and creates the GitHub release.
+ * NPM_TOKEN in the `npm` environment) and creates the GitHub release.
  */
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';

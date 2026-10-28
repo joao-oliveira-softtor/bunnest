@@ -86,6 +86,6 @@ The goal is behavior identical to `@nestjs/platform-express` (Express 5) unless 
 
 ## Releasing
 
-`main` is protected, so a release goes through a branch and a PR, and the tag sits on the squash commit (steps in `CONTRIBUTING.md`, "Releasing"). `RELEASE_BRANCH=chore/release-X.Y.Z bun run release <patch|minor|major|x.y.z>` bumps every public package to the same version, builds, tests, commits `chore(release): vX.Y.Z` and tags; answer N to its push prompt. The pushed `v*` tag triggers `release.yml`, which checks the tag against `packages/platform/package.json` and `main`, publishes to npm (`NPM_TOKEN` secret, `@softtor` scope) and creates a GitHub release. Pushing a `v*` tag publishes, so never push one without being asked.
+`main` is protected, so a release goes through a branch and a PR, and the tag sits on the squash commit (steps in `CONTRIBUTING.md`, "Releasing"). `RELEASE_BRANCH=chore/release-X.Y.Z bun run release <patch|minor|major|x.y.z>` bumps every public package to the same version, builds, tests, commits `chore(release): vX.Y.Z` and tags; answer N to its push prompt. The pushed `v*` tag triggers `release.yml`, which checks the tag against `packages/platform/package.json` and `main`, publishes to npm (`NPM_TOKEN`, an `@softtor` scope token in the `npm` environment, which only admits `v*` tags) and creates a GitHub release. Pushing a `v*` tag publishes, so never push one without being asked.
 
 A new public package needs a `README.md` and its filter in the root `test`/`typecheck`/`build` scripts.
