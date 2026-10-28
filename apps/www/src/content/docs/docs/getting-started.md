@@ -11,6 +11,8 @@ Requires **Bun 1.4 or newer** (`bun upgrade`) and **NestJS 12 or newer**.
 bunx @softtor/create-bunnest my-api --adapter bun
 ```
 
+`bun create @softtor/bunnest my-api --adapter bun` does the same.
+
 ## Add it to an existing project
 
 ```bash

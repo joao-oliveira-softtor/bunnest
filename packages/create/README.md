@@ -7,7 +7,7 @@ bunx @softtor/create-bunnest my-api                 # Express platform, same sha
 bunx @softtor/create-bunnest my-api --adapter bun   # native Bun.serve() via @softtor/bunnest-platform
 ```
 
-Also works as `npx @softtor/create-bunnest my-api`.
+Also works as `bun create @softtor/bunnest my-api` or `npx @softtor/create-bunnest my-api`.
 
 ## What you get
 
