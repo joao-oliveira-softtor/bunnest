@@ -36,7 +36,7 @@ describe('static assets', () => {
   let t: TestApp;
   let dir: string;
   beforeAll(async () => {
-    dir = await mkdtemp(join(tmpdir(), 'nestbun-static-'));
+    dir = await mkdtemp(join(tmpdir(), 'bunnest-static-'));
     await writeFile(join(dir, 'index.html'), '<h1>home</h1>');
     await writeFile(join(dir, 'app.js'), 'console.log(1)');
     await mkdir(join(dir, 'docs'));

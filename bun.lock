@@ -16,7 +16,7 @@
       },
     },
     "apps/www": {
-      "name": "@nestbun/www",
+      "name": "@softtor/bunnest-www",
       "version": "0.0.1",
       "dependencies": {
         "@astrojs/starlight": "^0.42.3",
@@ -25,33 +25,33 @@
       },
     },
     "bench": {
-      "name": "@nestbun/bench",
+      "name": "@softtor/bunnest-bench",
       "dependencies": {
-        "@nestbun/platform": "workspace:*",
         "@nestjs/common": "12.3.2",
         "@nestjs/core": "12.3.2",
         "@nestjs/platform-express": "12.3.2",
         "@nestjs/platform-fastify": "12.3.2",
+        "@softtor/bunnest-platform": "workspace:*",
         "reflect-metadata": "0.2.2",
         "rxjs": "7.8.2",
       },
     },
     "examples/basic": {
-      "name": "@nestbun/example-basic",
+      "name": "@softtor/bunnest-example-basic",
       "dependencies": {
-        "@nestbun/platform": "workspace:*",
         "@nestjs/common": "12.3.2",
         "@nestjs/core": "12.3.2",
+        "@softtor/bunnest-platform": "workspace:*",
         "reflect-metadata": "0.2.2",
         "rxjs": "7.8.2",
         "zod": "4.6.5",
       },
     },
     "packages/create": {
-      "name": "@nestbun/create",
+      "name": "@softtor/create-bunnest",
       "version": "0.1.2",
       "bin": {
-        "nestbun-create": "./dist/index.js",
+        "create-bunnest": "./dist/index.js",
       },
       "dependencies": {
         "@clack/prompts": "^1.8.1",
@@ -62,7 +62,7 @@
       },
     },
     "packages/platform": {
-      "name": "@nestbun/platform",
+      "name": "@softtor/bunnest-platform",
       "version": "0.4.0",
       "dependencies": {
         "cors": "^2.8.6",
@@ -99,50 +99,50 @@
       },
     },
     "packages/socket.io": {
-      "name": "@nestbun/socket.io",
+      "name": "@softtor/bunnest-socket.io",
       "version": "0.4.0",
       "dependencies": {
         "@socket.io/bun-engine": "0.1.2",
       },
       "devDependencies": {
-        "@nestbun/platform": "workspace:*",
         "@nestjs/common": "12.3.2",
         "@nestjs/core": "12.3.2",
         "@nestjs/platform-socket.io": "12.3.2",
         "@nestjs/testing": "12.3.2",
         "@nestjs/websockets": "12.3.2",
+        "@softtor/bunnest-platform": "workspace:*",
         "reflect-metadata": "0.2.2",
         "rxjs": "7.8.2",
         "socket.io": "4.8.4",
         "socket.io-client": "4.8.3",
       },
       "peerDependencies": {
-        "@nestbun/platform": "0.4.0",
         "@nestjs/common": "^12.0.0",
         "@nestjs/core": "^12.0.0",
         "@nestjs/platform-socket.io": "^12.0.0",
         "@nestjs/websockets": "^12.0.0",
+        "@softtor/bunnest-platform": "0.4.0",
         "rxjs": "^7.1.0",
         "socket.io": "^4.8.0",
       },
     },
     "packages/ws": {
-      "name": "@nestbun/ws",
+      "name": "@softtor/bunnest-ws",
       "version": "0.4.0",
       "devDependencies": {
-        "@nestbun/platform": "workspace:*",
         "@nestjs/common": "12.3.2",
         "@nestjs/core": "12.3.2",
         "@nestjs/testing": "12.3.2",
         "@nestjs/websockets": "12.3.2",
+        "@softtor/bunnest-platform": "workspace:*",
         "reflect-metadata": "0.2.2",
         "rxjs": "7.8.2",
       },
       "peerDependencies": {
-        "@nestbun/platform": "0.4.0",
         "@nestjs/common": "^12.0.0",
         "@nestjs/core": "^12.0.0",
         "@nestjs/websockets": "^12.0.0",
+        "@softtor/bunnest-platform": "0.4.0",
         "rxjs": "^7.1.0",
       },
     },
@@ -410,20 +410,6 @@
 
     "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@1.2.4", "", { "dependencies": { "@tybys/wasm-util": "^0.10.3" }, "peerDependencies": { "@emnapi/core": "^1.7.1 || ^2.0.0-alpha.4", "@emnapi/runtime": "^1.7.1 || ^2.0.0-alpha.4" } }, "sha512-AJxoUD2/15ESHbvpcyjU274nsAPLuOtPHCk0vKJM5pj//Fg/B1FXNWjPnXTT9PymCYYiHo4zPj0ZomXBKhoy7g=="],
 
-    "@nestbun/bench": ["@nestbun/bench@workspace:bench"],
-
-    "@nestbun/create": ["@nestbun/create@workspace:packages/create"],
-
-    "@nestbun/example-basic": ["@nestbun/example-basic@workspace:examples/basic"],
-
-    "@nestbun/platform": ["@nestbun/platform@workspace:packages/platform"],
-
-    "@nestbun/socket.io": ["@nestbun/socket.io@workspace:packages/socket.io"],
-
-    "@nestbun/ws": ["@nestbun/ws@workspace:packages/ws"],
-
-    "@nestbun/www": ["@nestbun/www@workspace:apps/www"],
-
     "@nestjs/common": ["@nestjs/common@12.3.2", "", { "dependencies": { "@standard-schema/spec": "1.1.0", "file-type": "22.2.0", "iterare": "1.2.1", "load-esm": "1.0.3", "tslib": "2.8.1", "uid": "2.0.2" }, "peerDependencies": { "class-transformer": ">=0.4.1", "class-validator": ">=0.13.2", "reflect-metadata": "^0.1.12 || ^0.2.0", "rxjs": "^7.1.0" }, "optionalPeers": ["class-transformer", "class-validator"] }, "sha512-XPNu75rXiDBuQ/EECiA0urFJ7bAycA1/xTrKnKct5vEF7A5FE0LyOem/EhRZI0Cq1xAGPDuTB89sFMqeSPWjzQ=="],
 
     "@nestjs/core": ["@nestjs/core@12.3.2", "", { "dependencies": { "fast-safe-stringify": "2.1.1", "iterare": "1.2.1", "path-to-regexp": "8.4.2", "tslib": "2.8.1", "uid": "2.0.2" }, "peerDependencies": { "@nestjs/common": "^12.0.0", "@nestjs/microservices": "^12.0.0", "@nestjs/platform-express": "^12.0.0", "@nestjs/websockets": "^12.0.0", "reflect-metadata": "^0.1.12 || ^0.2.0", "rxjs": "^7.1.0" }, "optionalPeers": ["@nestjs/microservices", "@nestjs/platform-express", "@nestjs/websockets"] }, "sha512-lCDN5iC4BoG9k5Sk/tG2EF4VAtoZABFjN4e0nk9xKK3ytD4eSMc9ma1Y092t/navenlf3roTtCDUZ/RIHzYjCw=="],
@@ -569,6 +555,20 @@
     "@socket.io/bun-engine": ["@socket.io/bun-engine@0.1.2", "", { "peerDependencies": { "typescript": "*" } }, "sha512-rp0sDPtBBd/OS+6GXcL+QG2p3t54FCPQKqMQR2hMpL5FOyC4OAm97tTy9Haano+vnkRuwBmUAlhJeijw83/hmA=="],
 
     "@socket.io/component-emitter": ["@socket.io/component-emitter@3.1.2", "", {}, "sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA=="],
+
+    "@softtor/bunnest-bench": ["@softtor/bunnest-bench@workspace:bench"],
+
+    "@softtor/bunnest-example-basic": ["@softtor/bunnest-example-basic@workspace:examples/basic"],
+
+    "@softtor/bunnest-platform": ["@softtor/bunnest-platform@workspace:packages/platform"],
+
+    "@softtor/bunnest-socket.io": ["@softtor/bunnest-socket.io@workspace:packages/socket.io"],
+
+    "@softtor/bunnest-ws": ["@softtor/bunnest-ws@workspace:packages/ws"],
+
+    "@softtor/bunnest-www": ["@softtor/bunnest-www@workspace:apps/www"],
+
+    "@softtor/create-bunnest": ["@softtor/create-bunnest@workspace:packages/create"],
 
     "@standard-schema/spec": ["@standard-schema/spec@1.1.0", "", {}, "sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w=="],
 

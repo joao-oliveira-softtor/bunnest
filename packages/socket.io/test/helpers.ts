@@ -1,7 +1,11 @@
 import 'reflect-metadata';
 import type { Type } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { BunAdapter, type BunAdapterOptions, type NestBunApplication } from '@nestbun/platform';
+import {
+  BunAdapter,
+  type BunAdapterOptions,
+  type NestBunApplication,
+} from '@softtor/bunnest-platform';
 import { createRequire } from 'node:module';
 import { io, type ManagerOptions, type Socket, type SocketOptions } from 'socket.io-client';
 import { BunIoAdapter, type BunIoAdapterOptions } from '../src/index.js';

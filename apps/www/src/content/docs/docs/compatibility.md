@@ -1,6 +1,6 @@
 ---
 title: Compatibility
-description: NestJS Bun compatibility table. Which Nest features and ecosystem packages (swagger, testing, SSE, static files) work on the nestbun adapter.
+description: NestJS Bun compatibility table. Which Nest features and ecosystem packages (swagger, testing, SSE, static files) work on the bunnest adapter.
 ---
 
 Every ✅ row has an integration test in `packages/platform/test` that boots a real Nest app on the adapter.
@@ -25,8 +25,8 @@ Every ✅ row has an integration test in `packages/platform/test` that boots a r
 | Unix socket listen | ✅ |
 | Security hooks (`useSecurityHeaders`, `enableCsrfProtection`) | ✅ via `AbstractHttpAdapter` |
 | `trustProxy` (`req.ip`, `req.ips`, `req.protocol`, `req.host` via `X-Forwarded-*`) | ✅ |
-| WebSocket gateways | ✅ [`@nestbun/ws`](../websockets/) (`BunWsAdapter`: one path per gateway, `{ event, data }` messages, pub/sub rooms, `messageParser`) |
-| Socket.IO gateways | ✅ [`@nestbun/socket.io`](../websockets/#socketio) (`BunIoAdapter`: namespaces, rooms, acks, middleware, `websocket` and `polling` on the HTTP port) |
+| WebSocket gateways | ✅ [`@softtor/bunnest-ws`](../websockets/) (`BunWsAdapter`: one path per gateway, `{ event, data }` messages, pub/sub rooms, `messageParser`) |
+| Socket.IO gateways | ✅ [`@softtor/bunnest-socket.io`](../websockets/#socketio) (`BunIoAdapter`: namespaces, rooms, acks, middleware, `websocket` and `polling` on the HTTP port) |
 | Multipart via the `@UploadedFile()` decorator | ⏳ planned |
 | Multipart via `req.native.formData()` (Web `Request`, limit via `serve.maxRequestBodySize`) | ✅ |
 
@@ -43,9 +43,9 @@ Every ✅ row has an integration test in `packages/platform/test` that boots a r
 | `cookie-parser` | ✅ `app.use(cookieParser(secret))`, `req.cookies` / `req.signedCookies` |
 | `cors` | ✅ used internally |
 | `@nestjs/serve-static` | ⚠️ untested; use `useStaticAssets` |
-| `@nestjs/platform-socket.io`, `@nestjs/platform-ws` | ❌ attach to a Node server (the adapter logs a warning when one does); use `BunWsAdapter` from `@nestbun/ws` and `BunIoAdapter` from `@nestbun/socket.io` instead |
+| `@nestjs/platform-socket.io`, `@nestjs/platform-ws` | ❌ attach to a Node server (the adapter logs a warning when one does); use `BunWsAdapter` from `@softtor/bunnest-ws` and `BunIoAdapter` from `@softtor/bunnest-socket.io` instead |
 | `supertest` | ❌ use `adapter.fetch()` |
 | `multer` / `@nestjs/platform-express` interceptors | ❌ Express-only |
 | Arbitrary Express middleware | ⚠️ see [Differences from Express](../differences-from-express/) |
 
-Found something missing? [Open an issue](https://github.com/mguay22/nestbun/issues) with a minimal controller.
+Found something missing? [Open an issue](https://github.com/joao-oliveira-softtor/bunnest/issues) with a minimal controller.

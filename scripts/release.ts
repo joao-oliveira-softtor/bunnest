@@ -2,7 +2,7 @@
  * Cut a release: bun run release <patch|minor|major|x.y.z> [--dry-run]
  *
  * Bumps every public package in packages/* to the same new version, points the generator
- * at the new adapter (PLATFORM_VERSION, only when @nestbun/create is released too),
+ * at the new adapter (PLATFORM_VERSION, only when @softtor/create-bunnest is released too),
  * commits, tags vX.Y.Z and, after a confirmation,
  * pushes. The pushed tag triggers the Release workflow, which publishes to npm (it needs
  * the NPM_TOKEN repository secret) and creates the GitHub release.
@@ -75,10 +75,9 @@ if (blocker) fail(blocker);
 
 const [nextMajor, nextMinor] = parse(next);
 const platformRange = `^${nextMajor}.${nextMinor}.0`;
-// The generator follows the new adapter only when it ships too. A fork that keeps
-// @nestbun/create private publishes the adapter under another name, so generated projects
-// must keep depending on the upstream @nestbun/platform range.
-const pinScaffold = packages.some((pkg) => pkg.json.name === '@nestbun/create');
+// The generator follows the new adapter only when it ships too; a private generator keeps
+// the range it has.
+const pinScaffold = packages.some((pkg) => pkg.json.name === '@softtor/create-bunnest');
 const scaffold = join(root, 'packages/create/src/scaffold.ts');
 const scaffoldSource = await readFile(scaffold, 'utf8');
 const pinned = /PLATFORM_VERSION = '[^']*'/;
@@ -89,7 +88,7 @@ for (const pkg of packages) console.log(`${pkg.json.name}  ${pkg.json.version} â
 console.log(
   pinScaffold
     ? `PLATFORM_VERSION â†’ ${platformRange}`
-    : 'PLATFORM_VERSION unchanged (@nestbun/create is private, not released)',
+    : 'PLATFORM_VERSION unchanged (@softtor/create-bunnest is private, not released)',
 );
 if (dryRun) {
   console.log(
@@ -98,7 +97,7 @@ if (dryRun) {
   process.exit(0);
 }
 
-// Siblings depend on each other at the exact shared version (e.g. @nestbun/ws on @nestbun/platform).
+// Siblings depend on each other at the exact shared version (e.g. @softtor/bunnest-ws on @softtor/bunnest-platform).
 const names = packages.map((pkg) => pkg.json.name);
 for (const pkg of packages) {
   const source = await readFile(pkg.file, 'utf8');

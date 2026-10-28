@@ -4,7 +4,7 @@ import { AbstractWsAdapter } from '@nestjs/websockets';
 import type { Server, ServerWebSocket, WebSocketHandler } from 'bun';
 import { EMPTY, type Observable, Subject, catchError, filter, mergeMap, takeUntil } from 'rxjs';
 
-/** The parts of `BunHttpServer` (from `@nestbun/platform`) this adapter uses. */
+/** The parts of `BunHttpServer` (from `@softtor/bunnest-platform`) this adapter uses. */
 interface UpgradeCapableServer {
   bun: Server<unknown> | null;
   setUpgradeHook(

@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Logger, StandardSchemaValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { BunAdapter, type NestBunApplication } from '@nestbun/platform';
+import { BunAdapter, type NestBunApplication } from '@softtor/bunnest-platform';
 import { AppModule } from './app.module.js';
 
 // Runs directly on Bun.serve() — no Express, no node:http.

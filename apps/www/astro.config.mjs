@@ -2,10 +2,10 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
-// Deployed to GitHub Pages at https://mguay22.github.io/nestbun/
-// Set SITE_URL / SITE_BASE to move it (e.g. SITE_URL=https://nestbun.dev SITE_BASE=/).
-const site = process.env.SITE_URL ?? 'https://mguay22.github.io';
-const base = process.env.SITE_BASE ?? '/nestbun';
+// Deployed to GitHub Pages at https://joao-oliveira-softtor.github.io/bunnest/
+// Set SITE_URL / SITE_BASE to move it (e.g. SITE_URL=https://bunnest.dev SITE_BASE=/).
+const site = process.env.SITE_URL ?? 'https://joao-oliveira-softtor.github.io';
+const base = process.env.SITE_BASE ?? '/bunnest';
 
 export default defineConfig({
   site,
@@ -13,15 +13,15 @@ export default defineConfig({
   trailingSlash: 'ignore',
   integrations: [
     starlight({
-      title: 'nestbun',
+      title: 'bunnest',
       description:
-        'nestbun is a NestJS adapter for Bun: run your Nest app natively on Bun.serve(), faster than Express and Fastify, with a one-line change.',
-      logo: { src: './src/assets/logo.svg', alt: 'nestbun' },
+        'bunnest is a NestJS adapter for Bun: run your Nest app natively on Bun.serve(), faster than Express and Fastify, with a one-line change.',
+      logo: { src: './src/assets/logo.svg', alt: 'bunnest' },
       head: [
         { tag: 'meta', attrs: { property: 'og:image', content: `${site}${base}/og.png` } },
         { tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
         { tag: 'meta', attrs: { property: 'og:image:height', content: '630' } },
-        { tag: 'meta', attrs: { property: 'og:site_name', content: 'nestbun' } },
+        { tag: 'meta', attrs: { property: 'og:site_name', content: 'bunnest' } },
         { tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' } },
         { tag: 'meta', attrs: { name: 'twitter:image', content: `${site}${base}/og.png` } },
         { tag: 'meta', attrs: { name: 'theme-color', content: '#17181c' } },
@@ -37,10 +37,18 @@ export default defineConfig({
       customCss: ['./src/styles/custom.css'],
       components: { SocialIcons: './src/components/SocialIcons.astro' },
       social: [
-        { icon: 'github', label: 'GitHub', href: 'https://github.com/mguay22/nestbun' },
-        { icon: 'npm', label: 'npm', href: 'https://www.npmjs.com/package/@nestbun/platform' },
+        {
+          icon: 'github',
+          label: 'GitHub',
+          href: 'https://github.com/joao-oliveira-softtor/bunnest',
+        },
+        {
+          icon: 'npm',
+          label: 'npm',
+          href: 'https://www.npmjs.com/package/@softtor/bunnest-platform',
+        },
       ],
-      editLink: { baseUrl: 'https://github.com/mguay22/nestbun/edit/main/apps/www/' },
+      editLink: { baseUrl: 'https://github.com/joao-oliveira-softtor/bunnest/edit/main/apps/www/' },
       lastUpdated: true,
       sidebar: [
         {

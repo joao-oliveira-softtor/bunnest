@@ -7,8 +7,8 @@ A [NestJS](https://nestjs.com) starter that runs on the [Bun](https://bun.com) r
 Requires Bun ≥ 1.4 (`bun upgrade`).
 
 ```bash
-bun create @nestbun my-api                 # Express, same shape as nest new
-bun create @nestbun my-api --adapter bun   # native Bun.serve() via @nestbun/platform
+bunx @softtor/create-bunnest my-api                 # Express, same shape as nest new
+bunx @softtor/create-bunnest my-api --adapter bun   # native Bun.serve() via @softtor/bunnest-platform
 cd my-api
 bun dev
 ```

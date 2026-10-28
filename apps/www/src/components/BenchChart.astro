@@ -1,7 +1,7 @@
 ---
 /**
  * Small-multiple bar chart: one panel per scenario, one bar per adapter.
- * Single series per panel (no legend needed); the nestbun bar is emphasized.
+ * Single series per panel (no legend needed); the bunnest bar is emphasized.
  * Bars are HTML so labels wrap and the chart stays responsive.
  */
 interface Row {
@@ -15,7 +15,7 @@ interface Row {
 const rows: Row[] = [
   { adapter: 'platform-express', get: 93_449, post: 71_763 },
   { adapter: 'platform-fastify', get: 116_358, post: 91_533 },
-  { adapter: '@nestbun/platform', get: 119_022, post: 98_124, highlight: true },
+  { adapter: '@softtor/bunnest-platform', get: 119_022, post: 98_124, highlight: true },
   { adapter: 'Bun.serve', get: 157_694, post: 153_660, note: 'no framework' },
 ];
 

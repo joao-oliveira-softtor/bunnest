@@ -1,5 +1,5 @@
 {
-  "name": "@nestbun/platform",
+  "name": "@softtor/bunnest-platform",
   "version": "0.4.0",
   "description": "NestJS HTTP adapter for the Bun runtime — run Nest on Bun.serve instead of Express",
   "license": "MIT",
@@ -35,11 +35,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mguay22/nestbun.git",
+    "url": "git+https://github.com/joao-oliveira-softtor/bunnest.git",
     "directory": "packages/platform"
   },
-  "homepage": "https://mguay22.github.io/nestbun/",
-  "bugs": "https://github.com/mguay22/nestbun/issues",
+  "homepage": "https://joao-oliveira-softtor.github.io/bunnest/",
+  "bugs": "https://github.com/joao-oliveira-softtor/bunnest/issues",
   "engines": {
     "bun": ">=1.4.0"
   },

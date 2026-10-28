@@ -3,7 +3,7 @@ import { Server as Engine, type ServerOptions as EngineOptions } from '@socket.i
 import type { Server, WebSocketHandler } from 'bun';
 import { Server as SocketIoServer, type ServerOptions } from 'socket.io';
 
-/** The parts of `BunHttpServer` (from `@nestbun/platform`) this adapter uses. */
+/** The parts of `BunHttpServer` (from `@softtor/bunnest-platform`) this adapter uses. */
 interface UpgradeCapableServer {
   setUpgradeHook(
     hook: {

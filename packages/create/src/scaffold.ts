@@ -10,7 +10,7 @@ export interface ScaffoldOptions {
   dir: string;
   /** Package name written to package.json. Defaults to the directory's basename. */
   name?: string;
-  /** HTTP platform. `express` matches `nest new`; `bun` uses @nestbun/platform. */
+  /** HTTP platform. `express` matches `nest new`; `bun` uses @softtor/bunnest-platform. */
   adapter?: Adapter;
   /** Overwrite a non-empty directory. */
   force?: boolean;
@@ -27,7 +27,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 /** Resolves from `src/` (tests) and from `dist/` (published bin) alike. */
 export const templatesDir = resolve(here, '..', 'templates');
 
-/** Version range of @nestbun/platform written into generated projects. */
+/** Version range of @softtor/bunnest-platform written into generated projects. */
 export const PLATFORM_VERSION = '^0.1.0';
 
 export async function scaffold(options: ScaffoldOptions): Promise<ScaffoldResult> {
@@ -67,12 +67,12 @@ export async function scaffold(options: ScaffoldOptions): Promise<ScaffoldResult
     await cp(join(templatesDir, 'bun-adapter'), dir, { recursive: true, force: true });
     delete pkg.dependencies['@nestjs/platform-express'];
     delete pkg.devDependencies['@types/express'];
-    pkg.dependencies['@nestbun/platform'] = PLATFORM_VERSION;
+    pkg.dependencies['@softtor/bunnest-platform'] = PLATFORM_VERSION;
     pkg.dependencies = sortKeys(pkg.dependencies);
     readme = readme
       .replace(
         '- **Bun runtime** — `bun --watch src/main.ts` for dev, `bun test` for unit and e2e tests',
-        '- **Bun runtime, natively** — runs on [`@nestbun/platform`](https://mguay22.github.io/nestbun/), a NestJS adapter for `Bun.serve()` (no Express); `bun --watch src/main.ts` for dev, `bun test` for unit and e2e tests',
+        '- **Bun runtime, natively** — runs on [`@softtor/bunnest-platform`](https://joao-oliveira-softtor.github.io/bunnest/), a NestJS adapter for `Bun.serve()` (no Express); `bun --watch src/main.ts` for dev, `bun test` for unit and e2e tests',
       )
       .replace(
         'app.e2e.test.ts      boots the app on a random port and hits it with fetch',

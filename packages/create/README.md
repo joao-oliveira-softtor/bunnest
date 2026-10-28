@@ -1,13 +1,13 @@
-# @nestbun/create
+# @softtor/create-bunnest
 
 `nest new`, but for the Bun runtime.
 
 ```bash
-bun create @nestbun my-api                 # Express platform, same shape as nest new
-bun create @nestbun my-api --adapter bun   # native Bun.serve() via @nestbun/platform
+bunx @softtor/create-bunnest my-api                 # Express platform, same shape as nest new
+bunx @softtor/create-bunnest my-api --adapter bun   # native Bun.serve() via @softtor/bunnest-platform
 ```
 
-Also works as `bunx @nestbun/create my-api` or `npx @nestbun/create my-api`.
+Also works as `bunx @softtor/create-bunnest my-api` or `npx @softtor/create-bunnest my-api`.
 
 ## What you get
 
@@ -17,7 +17,7 @@ Also works as `bunx @nestbun/create my-api` or `npx @nestbun/create my-api`.
 - TypeScript 7 for type-checking, oxlint, Prettier
 - `bun run g resource users` proxies to the Nest CLI schematics, and the output type-checks as-is
 
-With `--adapter bun`, `src/main.ts` boots on `BunAdapter` from [`@nestbun/platform`](https://mguay22.github.io/nestbun/): no Express, no `node:http`, and the e2e test runs against `Bun.serve()`.
+With `--adapter bun`, `src/main.ts` boots on `BunAdapter` from [`@softtor/bunnest-platform`](https://joao-oliveira-softtor.github.io/bunnest/): no Express, no `node:http`, and the e2e test runs against `Bun.serve()`.
 
 ## Options
 
@@ -32,4 +32,4 @@ With `--adapter bun`, `src/main.ts` boots on `BunAdapter` from [`@nestbun/platfo
 
 ## How it works
 
-`templates/base` is the project as generated. `--adapter bun` copies `templates/bun-adapter` on top (a `main.ts` and an e2e test that use `BunAdapter`) and swaps `@nestjs/platform-express` for `@nestbun/platform` in `package.json`. Nothing is templated with placeholders, so the base template is a runnable project you can open and edit directly.
+`templates/base` is the project as generated. `--adapter bun` copies `templates/bun-adapter` on top (a `main.ts` and an e2e test that use `BunAdapter`) and swaps `@nestjs/platform-express` for `@softtor/bunnest-platform` in `package.json`. Nothing is templated with placeholders, so the base template is a runnable project you can open and edit directly.

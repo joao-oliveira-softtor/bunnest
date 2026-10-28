@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import type { Type } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { BunAdapter, type NestBunApplication } from '@nestbun/platform';
+import { BunAdapter, type NestBunApplication } from '@softtor/bunnest-platform';
 import { createRequire } from 'node:module';
 import { BunWsAdapter, type BunWsAdapterOptions } from '../src/index.js';
 

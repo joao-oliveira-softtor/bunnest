@@ -1,10 +1,11 @@
 import { afterAll, describe, expect, it } from 'bun:test';
-import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { scaffold, type Adapter } from '../src/scaffold.js';
+import { PLATFORM_VERSION, scaffold, type Adapter } from '../src/scaffold.js';
 
-const root = await mkdtemp(join(tmpdir(), 'nestbun-create-'));
+const root = await mkdtemp(join(tmpdir(), 'create-bunnest-'));
 afterAll(() => rm(root, { recursive: true, force: true }));
 
 /** Generate, install, type-check, test, and boot the result. The real thing, not a snapshot. */
@@ -17,6 +18,14 @@ async function generateAndVerify(adapter: Adapter) {
   const pkg = JSON.parse(await readFile(join(dir, 'package.json'), 'utf8'));
   expect(pkg.name).toBe(`app-${adapter}`);
   expect(pkg['bun-create']).toBeUndefined();
+
+  if (adapter === 'bun') {
+    // Install the adapter at this commit, packed as npm ships it: before a release its new
+    // version (or, before the first one, its name) is not on npm yet.
+    expect(pkg.dependencies['@softtor/bunnest-platform']).toBe(PLATFORM_VERSION);
+    const dependencies = { ...pkg.dependencies, '@softtor/bunnest-platform': await packPlatform() };
+    await writeFile(join(dir, 'package.json'), JSON.stringify({ ...pkg, dependencies }, null, 2));
+  }
 
   await exec(['bun', 'install'], dir);
   await exec(['bun', 'run', 'typecheck'], dir);
@@ -39,20 +48,20 @@ async function generateAndVerify(adapter: Adapter) {
   return { dir, pkg };
 }
 
-describe('@nestbun/create', () => {
+describe('@softtor/create-bunnest', () => {
   it('express (default) generates the same project as the nest-bun template', async () => {
     const { pkg } = await generateAndVerify('express');
     expect(pkg.dependencies['@nestjs/platform-express']).toBeDefined();
-    expect(pkg.dependencies['@nestbun/platform']).toBeUndefined();
+    expect(pkg.dependencies['@softtor/bunnest-platform']).toBeUndefined();
   }, 120_000);
 
-  it('--adapter bun swaps in @nestbun/platform', async () => {
+  it('--adapter bun swaps in @softtor/bunnest-platform', async () => {
     const { dir, pkg } = await generateAndVerify('bun');
-    expect(pkg.dependencies['@nestbun/platform']).toBeDefined();
+    expect(pkg.dependencies['@softtor/bunnest-platform']).toBeDefined();
     expect(pkg.dependencies['@nestjs/platform-express']).toBeUndefined();
     expect(pkg.devDependencies['@types/express']).toBeUndefined();
     expect(await readFile(join(dir, 'src/main.ts'), 'utf8')).toContain('new BunAdapter()');
-    expect(await readFile(join(dir, 'README.md'), 'utf8')).toContain('@nestbun/platform');
+    expect(await readFile(join(dir, 'README.md'), 'utf8')).toContain('@softtor/bunnest-platform');
   }, 120_000);
 
   it('refuses a non-empty directory unless forced', async () => {
@@ -63,6 +72,17 @@ describe('@nestbun/create', () => {
     });
   });
 });
+
+/** Packs packages/platform into `root` and returns a `file:` spec for the tarball. */
+async function packPlatform(): Promise<string> {
+  const platform = join(import.meta.dir, '../../platform');
+  if (!existsSync(join(platform, 'dist/index.d.ts')))
+    throw new Error('packages/platform/dist is missing: run `bun run build` before the tests');
+  await exec(['bun', 'pm', 'pack', '--destination', root, '--ignore-scripts', '--quiet'], platform);
+  const tarball = (await readdir(root)).find((file) => file.endsWith('.tgz'));
+  if (!tarball) throw new Error('bun pm pack wrote no tarball');
+  return `file:${join(root, tarball)}`;
+}
 
 async function exec(cmd: string[], cwd: string): Promise<void> {
   const proc = Bun.spawn(cmd, { cwd, stdout: 'pipe', stderr: 'pipe' });

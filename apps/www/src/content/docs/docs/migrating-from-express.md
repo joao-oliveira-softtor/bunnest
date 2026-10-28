@@ -1,6 +1,6 @@
 ---
 title: Migrating from Express
-description: Migrate a NestJS app from Express to Bun. What changes when you swap @nestjs/platform-express for the nestbun adapter, and what to check.
+description: Migrate a NestJS app from Express to Bun. What changes when you swap @nestjs/platform-express for the bunnest adapter, and what to check.
 ---
 
 Most apps migrate by changing one import. This page lists what to check.
@@ -9,14 +9,14 @@ Most apps migrate by changing one import. This page lists what to check.
 
 ```diff
 - import { NestExpressApplication } from '@nestjs/platform-express';
-+ import { BunAdapter, type NestBunApplication } from '@nestbun/platform';
++ import { BunAdapter, type NestBunApplication } from '@softtor/bunnest-platform';
 
 - const app = await NestFactory.create<NestExpressApplication>(AppModule);
 + const app = await NestFactory.create<NestBunApplication>(AppModule, new BunAdapter());
 ```
 
 ```bash
-bun add @nestbun/platform
+bun add @softtor/bunnest-platform
 ```
 
 ## 2. Replace the run scripts
@@ -40,7 +40,7 @@ bun add @nestbun/platform
 Type it explicitly if you were importing `Response` from Express:
 
 ```ts
-import type { BunResponse } from '@nestbun/platform';
+import type { BunResponse } from '@softtor/bunnest-platform';
 
 @Get('download')
 download(@Res() res: BunResponse) {

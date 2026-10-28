@@ -1,13 +1,13 @@
-# nestbun
+# bunnest
 
 NestJS on the Bun runtime. A Bun workspace monorepo that publishes four npm packages:
 
-- `@nestbun/platform` (`packages/platform`): a NestJS HTTP adapter built on `Bun.serve()`, with no Express and no `node:http`.
-- `@nestbun/ws` (`packages/ws`): WebSocket gateways (`BunWsAdapter`) on the platform's upgrade hook, sharing the HTTP port.
-- `@nestbun/socket.io` (`packages/socket.io`): Socket.IO gateways (`BunIoAdapter`) through `@socket.io/bun-engine`, on the same upgrade hook and HTTP port.
-- `@nestbun/create` (`packages/create`): the project generator behind `bun create @nestbun my-api`.
+- `@softtor/bunnest-platform` (`packages/platform`): a NestJS HTTP adapter built on `Bun.serve()`, with no Express and no `node:http`.
+- `@softtor/bunnest-ws` (`packages/ws`): WebSocket gateways (`BunWsAdapter`) on the platform's upgrade hook, sharing the HTTP port.
+- `@softtor/bunnest-socket.io` (`packages/socket.io`): Socket.IO gateways (`BunIoAdapter`) through `@socket.io/bun-engine`, on the same upgrade hook and HTTP port.
+- `@softtor/create-bunnest` (`packages/create`): the project generator behind `bunx @softtor/create-bunnest my-api`.
 
-Docs site: https://mguay22.github.io/nestbun/ (source in `apps/www`).
+Docs site: https://joao-oliveira-softtor.github.io/bunnest/ (source in `apps/www`).
 
 ## Commands
 
@@ -32,8 +32,8 @@ Other:
 
 ```bash
 cd examples/basic && bun dev              # http://localhost:3000/cats
-bun run --filter '@nestbun/www' dev       # docs site
-bun run --filter '@nestbun/bench' bench   # ~1 minute benchmark, prints a markdown table
+bun run --filter '@softtor/bunnest-www' dev       # docs site
+bun run --filter '@softtor/bunnest-bench' bench   # ~1 minute benchmark, prints a markdown table
 bun run release patch --dry-run           # preview a release
 ```
 
@@ -42,8 +42,8 @@ bun run release patch --dry-run           # preview a release
 ```
 packages/platform/src    the adapter
 packages/platform/test   integration tests against real Nest apps
-packages/ws              @nestbun/ws: BunWsAdapter (src) and its integration tests (test)
-packages/socket.io       @nestbun/socket.io: BunIoAdapter (src) and its integration tests (test)
+packages/ws              @softtor/bunnest-ws: BunWsAdapter (src) and its integration tests (test)
+packages/socket.io       @softtor/bunnest-socket.io: BunIoAdapter (src) and its integration tests (test)
 packages/create/src      generator CLI (index.ts) and scaffolding logic (scaffold.ts)
 packages/create/templates/base          the generated project, runnable as-is
 packages/create/templates/bun-adapter   files copied on top for --adapter bun
@@ -72,22 +72,20 @@ The goal is behavior identical to `@nestjs/platform-express` (Express 5) unless 
 - **Tests.** Adapter behavior gets an integration test in `packages/platform/test` that boots a real Nest app on `BunAdapter` and asserts what a client observes (helpers in `test/helpers.ts`; `swagger.test.ts` is the pattern for ecosystem packages). Generator changes get a test in `packages/create/test`. Build Nest WebSocket adapters in tests from `app.getHttpServer()`, not `app`: a new workspace package can add another `@nestjs/core` copy to the isolated linker, and `AbstractWsAdapter`'s `instanceof NestApplication` then fails.
 - **Compatibility table.** Every ✅ row has a test behind it. A new row goes in both `apps/www/src/content/docs/docs/compatibility.md` and `packages/platform/README.md`.
 - **Docs.** User-visible changes update the pages in `apps/www/src/content/docs/docs/`. The root `README.md` is for users; contributor material goes in `CONTRIBUTING.md`.
-- **Dependencies.** Keep the adapter's runtime dependencies minimal (currently `cors`, `path-to-regexp`). `@nestbun/socket.io` adds `@socket.io/bun-engine` (0.x), pinned exactly: bump it deliberately. Pin dev dependencies exactly (`bun add -d -E`) and commit `bun.lock`; CI installs with `--frozen-lockfile`. NestJS is pinned in `packages/platform`, `packages/ws`, `packages/socket.io`, `examples/basic`, `bench` and `packages/create/templates`: bump them together.
+- **Dependencies.** Keep the adapter's runtime dependencies minimal (currently `cors`, `path-to-regexp`). `@softtor/bunnest-socket.io` adds `@socket.io/bun-engine` (0.x), pinned exactly: bump it deliberately. Pin dev dependencies exactly (`bun add -d -E`) and commit `bun.lock`; CI installs with `--frozen-lockfile`. NestJS is pinned in `packages/platform`, `packages/ws`, `packages/socket.io`, `examples/basic`, `bench` and `packages/create/templates`: bump them together.
 - **Code style.** ESM with `.js` import extensions, Prettier (`.prettierrc`: single quotes, trailing commas, width 100), oxlint (`.oxlintrc.json`). Markdown is not formatted by Prettier. `packages/create/templates` has its own lint and Prettier config and is excluded from the root lint.
 - **TypeScript.** Decorators need `experimentalDecorators`; keep a `tsconfig.json` at the root, since Bun resolves it from the working directory.
-- **Templates.** `templates/base` contains no placeholders; it must stay a runnable project. `PLATFORM_VERSION` in `packages/create/src/scaffold.ts` is the adapter range generated projects depend on (the release script updates it only when `@nestbun/create` is released; the Softtor fork keeps `create` private, so it stays on the upstream range).
+- **Templates.** `templates/base` contains no placeholders; it must stay a runnable project. `PLATFORM_VERSION` in `packages/create/src/scaffold.ts` is the adapter range generated projects depend on (the release script updates it when `@softtor/create-bunnest` is released). The generator test installs the adapter packed from `packages/platform` (`bun pm pack`), never the version on npm, so run `bun run build` before it.
 
 ## Git workflow
 
 - All changes land through pull requests, never direct pushes to `main`: release notes are generated from merged PRs.
-- Branch off `main`, open a PR, squash-merge. In the Softtor fork (`fork` remote, `joao-oliveira-softtor/nestbun`) branch off `fork/softtor` and open PRs against `softtor`; `main` only mirrors upstream.
+- Branch off `main`, open a PR, squash-merge. `main` is protected (PR required, checks `test (ubuntu-latest, latest)` and `test (macos-latest, latest)`).
 - Commits and PR titles follow Conventional Commits: `type(scope): summary`, with scope one of `platform`, `create`, `ws`, `socket.io`, `www`, `bench` when it applies. Example: `fix(platform): honor bodyLimit on urlencoded bodies`. A `commit-msg` hook (commitlint) enforces it; a `pre-commit` hook lints and formats staged files.
 - PRs from first-time fork contributors show no checks until a maintainer approves the workflow run.
 
 ## Releasing
 
-`bun run release <patch|minor|major|x.y.z>` on a clean `main`: bumps every public package to the same version, builds, tests, commits `chore(release): vX.Y.Z`, tags, and asks before pushing. The pushed tag triggers `release.yml`, which publishes to npm and creates a GitHub release with generated notes. Pushing a `v*` tag publishes, so never push one without being asked.
+`main` is protected, so a release goes through a branch and a PR, and the tag sits on the squash commit (steps in `CONTRIBUTING.md`, "Releasing"). `RELEASE_BRANCH=chore/release-X.Y.Z bun run release <patch|minor|major|x.y.z>` bumps every public package to the same version, builds, tests, commits `chore(release): vX.Y.Z` and tags; answer N to its push prompt. The pushed `v*` tag triggers `release.yml`, which checks the tag against `packages/platform/package.json` and `main`, publishes to npm (`NPM_TOKEN` secret, `@softtor` scope) and creates a GitHub release. Pushing a `v*` tag publishes, so never push one without being asked.
 
-A new public package needs a `README.md` (the renamed publish copies it), its filter in the root `test`/`typecheck`/`build` scripts, and its pair in `PUBLISH_RENAME` (`release-softtor.yml`).
-
-Fork releases (`@softtor/nestbun-platform`, tags `softtor-vX.Y.Z`), upstream sync (merge commit, not squash) and the PRs carried from upstream are in `CONTRIBUTING.md` ("The Softtor fork"). `bun run release` without the `RELEASE_*` variables targets `origin/main` and the `v` prefix: never push a `v*` tag to the fork.
+A new public package needs a `README.md` and its filter in the root `test`/`typecheck`/`build` scripts.

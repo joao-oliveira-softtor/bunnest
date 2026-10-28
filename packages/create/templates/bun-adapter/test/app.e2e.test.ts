@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'bun:test';
 import { StandardSchemaValidationPipe, type INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { BunAdapter } from '@nestbun/platform';
+import { BunAdapter } from '@softtor/bunnest-platform';
 import { AppModule } from '../src/app.module.js';
 
 describe('App (e2e)', () => {

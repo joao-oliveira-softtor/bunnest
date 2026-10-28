@@ -13,7 +13,7 @@ const MTIME = new Date('2026-01-02T03:04:05Z');
 describe('static assets: Last-Modified', () => {
   let t: TestApp;
   beforeAll(async () => {
-    const dir = await mkdtemp(join(tmpdir(), 'nestbun-last-modified-'));
+    const dir = await mkdtemp(join(tmpdir(), 'bunnest-last-modified-'));
     const file = join(dir, 'app.css');
     await writeFile(file, 'body{}');
     await utimes(file, MTIME, MTIME);

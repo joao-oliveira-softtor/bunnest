@@ -18,7 +18,7 @@ class RootModule {}
 
 /** A throwaway self-signed certificate, generated per run so no key is ever committed. */
 async function selfSigned(): Promise<{ key: string; cert: string }> {
-  const dir = await mkdtemp(join(tmpdir(), 'nestbun-tls-'));
+  const dir = await mkdtemp(join(tmpdir(), 'bunnest-tls-'));
   const key = join(dir, 'key.pem');
   const cert = join(dir, 'cert.pem');
   const args = [

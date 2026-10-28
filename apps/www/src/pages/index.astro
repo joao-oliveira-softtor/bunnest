@@ -4,15 +4,15 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 import BenchChart from '../components/BenchChart.astro';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const site = 'https://mguay22.github.io';
+const site = 'https://joao-oliveira-softtor.github.io';
 
 const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'SoftwareSourceCode',
-  name: 'nestbun',
+  name: 'bunnest',
   description: 'A NestJS adapter for Bun that runs Nest applications natively on Bun.serve().',
   url: `${site}${base}/`,
-  codeRepository: 'https://github.com/mguay22/nestbun',
+  codeRepository: 'https://github.com/joao-oliveira-softtor/bunnest',
   programmingLanguage: 'TypeScript',
   runtimePlatform: 'Bun',
   license: 'https://opensource.org/licenses/MIT',
@@ -26,7 +26,7 @@ const jsonLd = JSON.stringify({
   frontmatter={{
     title: 'Run NestJS on Bun, natively',
     description:
-      'nestbun is a NestJS adapter for Bun. Run your Nest app on Bun.serve() with a one-line change: faster than Express and Fastify, no build step, full Nest compatibility.',
+      'bunnest is a NestJS adapter for Bun. Run your Nest app on Bun.serve() with a one-line change: faster than Express and Fastify, no build step, full Nest compatibility.',
     template: 'splash',
     head: [{ tag: 'script', attrs: { type: 'application/ld+json' }, content: jsonLd }],
     hero: {
@@ -35,7 +35,7 @@ const jsonLd = JSON.stringify({
         'A NestJS Bun adapter that runs your app straight on Bun.serve(). Swap one line, keep every controller, pipe, guard and filter, and drop the build step.',
       actions: [
         { text: 'Get started', link: `${base}/docs/getting-started/`, icon: 'right-arrow', variant: 'primary' },
-        { text: 'View on GitHub', link: 'https://github.com/mguay22/nestbun', icon: 'github', variant: 'minimal' },
+        { text: 'View on GitHub', link: 'https://github.com/joao-oliveira-softtor/bunnest', icon: 'github', variant: 'minimal' },
       ],
     },
   }}

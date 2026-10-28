@@ -24,7 +24,7 @@ class PageModule {}
 
 let views: string;
 beforeAll(async () => {
-  views = await mkdtemp(join(tmpdir(), 'nestbun-views-'));
+  views = await mkdtemp(join(tmpdir(), 'bunnest-views-'));
   await writeFile(join(views, 'index.ejs'), '<h1>Hello <%= name %></h1>');
   await writeFile(join(views, 'index.hbs'), '<h1>Hello {{name}}</h1>');
   await writeFile(join(views, 'index.pug'), 'h1 Hello #{name}');
