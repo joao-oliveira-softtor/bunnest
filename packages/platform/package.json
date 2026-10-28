@@ -1,6 +1,6 @@
 {
   "name": "@softtor/bunnest-platform",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "NestJS HTTP adapter for the Bun runtime — run Nest on Bun.serve instead of Express",
   "license": "MIT",
   "type": "module",
