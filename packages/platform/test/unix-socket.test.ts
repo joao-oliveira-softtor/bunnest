@@ -20,7 +20,7 @@ describe('unix socket listen', () => {
   let app: NestBunApplication;
   let socketPath: string;
   beforeAll(async () => {
-    socketPath = join(await mkdtemp(join(tmpdir(), 'nestbun-unix-')), 'app.sock');
+    socketPath = join(await mkdtemp(join(tmpdir(), 'bunnest-unix-')), 'app.sock');
     app = await NestFactory.create<NestBunApplication>(RootModule, new BunAdapter(), {
       logger: false,
     });

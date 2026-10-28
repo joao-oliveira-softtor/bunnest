@@ -1,18 +1,18 @@
 ---
 title: WebSockets
-description: WebSocket and Socket.IO gateways on Bun.serve with @nestbun/ws and @nestbun/socket.io, on the HTTP port.
+description: WebSocket and Socket.IO gateways on Bun.serve with @softtor/bunnest-ws and @softtor/bunnest-socket.io, on the HTTP port.
 ---
 
-NestJS WebSocket gateways on `Bun.serve`, on the same port as the HTTP app. It is the counterpart of `@nestjs/platform-ws` for [`@nestbun/platform`](https://www.npmjs.com/package/@nestbun/platform): gateways, `@SubscribeMessage()`, guards, pipes, interceptors and exception filters work unchanged.
+NestJS WebSocket gateways on `Bun.serve`, on the same port as the HTTP app. It is the counterpart of `@nestjs/platform-ws` for [`@softtor/bunnest-platform`](https://www.npmjs.com/package/@softtor/bunnest-platform): gateways, `@SubscribeMessage()`, guards, pipes, interceptors and exception filters work unchanged.
 
 ```bash
-bun add @nestbun/ws @nestjs/websockets
+bun add @softtor/bunnest-ws @nestjs/websockets
 ```
 
 ```ts
 import { NestFactory } from '@nestjs/core';
-import { BunAdapter, type NestBunApplication } from '@nestbun/platform';
-import { BunWsAdapter } from '@nestbun/ws';
+import { BunAdapter, type NestBunApplication } from '@softtor/bunnest-platform';
+import { BunWsAdapter } from '@softtor/bunnest-ws';
 import { AppModule } from './app.module.js';
 
 const app = await NestFactory.create<NestBunApplication>(AppModule, new BunAdapter());
@@ -52,7 +52,7 @@ Not supported: gateways on their own port (`@WebSocketGateway(4000)` throws, eve
 
 ## `WsException` arrives as "Internal server error"
 
-With Bun's default **isolated** linker, `@nestjs/core` and `@nestjs/websockets` declare each other as peers, and Bun installs two copies of `@nestjs/websockets`. A `WsException` your code imports then comes from a different copy than the one Nest checks against, and the client gets `{ "status": "error", "message": "Internal server error" }` instead of your message (with `@nestbun/socket.io`, an `exception` event with that message). This happens with any Nest WebSocket adapter, not only these. Install with the hoisted linker:
+With Bun's default **isolated** linker, `@nestjs/core` and `@nestjs/websockets` declare each other as peers, and Bun installs two copies of `@nestjs/websockets`. A `WsException` your code imports then comes from a different copy than the one Nest checks against, and the client gets `{ "status": "error", "message": "Internal server error" }` instead of your message (with `@softtor/bunnest-socket.io`, an `exception` event with that message). This happens with any Nest WebSocket adapter, not only these. Install with the hoisted linker:
 
 ```toml
 # bunfig.toml
@@ -62,14 +62,14 @@ linker = "hoisted"
 
 ## Socket.IO
 
-`@nestbun/socket.io` serves Socket.IO gateways on the same port, through [`@socket.io/bun-engine`](https://github.com/socketio/bun-engine) and the same upgrade hook. It is the counterpart of `@nestjs/platform-socket.io`: namespaces, rooms, acknowledgements, `@SubscribeMessage()`, guards, pipes, interceptors and exception filters work unchanged, over `websocket` and `polling`.
+`@softtor/bunnest-socket.io` serves Socket.IO gateways on the same port, through [`@socket.io/bun-engine`](https://github.com/socketio/bun-engine) and the same upgrade hook. It is the counterpart of `@nestjs/platform-socket.io`: namespaces, rooms, acknowledgements, `@SubscribeMessage()`, guards, pipes, interceptors and exception filters work unchanged, over `websocket` and `polling`.
 
 ```bash
-bun add @nestbun/socket.io @nestjs/websockets @nestjs/platform-socket.io socket.io
+bun add @softtor/bunnest-socket.io @nestjs/websockets @nestjs/platform-socket.io socket.io
 ```
 
 ```ts
-import { BunIoAdapter } from '@nestbun/socket.io';
+import { BunIoAdapter } from '@softtor/bunnest-socket.io';
 
 const app = await NestFactory.create<NestBunApplication>(AppModule, new BunAdapter());
 app.useWebSocketAdapter(new BunIoAdapter(app));

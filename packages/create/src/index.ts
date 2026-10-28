@@ -5,15 +5,14 @@ import pc from 'picocolors';
 import { scaffold, type Adapter } from './scaffold.js';
 
 const HELP = `
-${pc.bold('@nestbun/create')} — NestJS on the Bun runtime
+${pc.bold('@softtor/create-bunnest')} — NestJS on the Bun runtime
 
 ${pc.dim('Usage')}
-  bun create @nestbun [dir] [options]
-  bunx @nestbun/create [dir] [options]
+  bunx @softtor/create-bunnest [dir] [options]
 
 ${pc.dim('Options')}
   --adapter <express|bun>   HTTP platform. ${pc.dim('express')} matches nest new (default);
-                            ${pc.dim('bun')} runs on Bun.serve() via @nestbun/platform
+                            ${pc.dim('bun')} runs on Bun.serve() via @softtor/bunnest-platform
   --name <pkg>              package.json name (defaults to the directory name)
   --no-install              skip bun install
   --no-git                  skip git init
@@ -44,12 +43,12 @@ async function main(): Promise<void> {
   }
 
   const interactive = Boolean(process.stdout.isTTY) && !values.yes;
-  p.intro(pc.bgCyan(pc.black(' @nestbun/create ')));
+  p.intro(pc.bgCyan(pc.black(' @softtor/create-bunnest ')));
 
   let dir = positionals[0];
   if (!dir) {
     if (!interactive)
-      throw new Error('Missing project directory. Usage: bun create @nestbun my-api');
+      throw new Error('Missing project directory. Usage: bunx @softtor/create-bunnest my-api');
     const answer = await p.text({
       message: 'Where should we create your project?',
       placeholder: './my-api',
@@ -78,7 +77,7 @@ async function main(): Promise<void> {
           {
             value: 'bun',
             label: 'Bun.serve (native)',
-            hint: '@nestbun/platform; fastest, no Express',
+            hint: '@softtor/bunnest-platform; fastest, no Express',
           },
         ],
         initialValue: 'express',
@@ -114,7 +113,7 @@ async function main(): Promise<void> {
     [`cd ${dir}`, values.install ? '' : 'bun install', 'bun dev'].filter(Boolean).join('\n'),
     'Next steps',
   );
-  p.outro(`Docs: ${pc.underline('https://mguay22.github.io/nestbun/')}`);
+  p.outro(`Docs: ${pc.underline('https://joao-oliveira-softtor.github.io/bunnest/')}`);
 }
 
 function cancel(): void {

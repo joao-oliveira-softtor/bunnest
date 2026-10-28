@@ -1,6 +1,6 @@
 ---
 title: Getting started
-description: Run NestJS on Bun in two minutes. Start a new project with @nestbun/create, or add the @nestbun/platform adapter to an existing Nest app with one line changed.
+description: Run NestJS on Bun in two minutes. Start a new project with @softtor/create-bunnest, or add the @softtor/bunnest-platform adapter to an existing Nest app with one line changed.
 ---
 
 Requires **Bun 1.4 or newer** (`bun upgrade`) and **NestJS 12 or newer**.
@@ -8,20 +8,20 @@ Requires **Bun 1.4 or newer** (`bun upgrade`) and **NestJS 12 or newer**.
 ## Start a new project
 
 ```bash
-bun create @nestbun my-api --adapter bun
+bunx @softtor/create-bunnest my-api --adapter bun
 ```
 
 ## Add it to an existing project
 
 ```bash
-bun add @nestbun/platform
+bun add @softtor/bunnest-platform
 ```
 
 Then pass it to `NestFactory.create()`. This is the only code change:
 
 ```ts title="src/main.ts"
 import { NestFactory } from '@nestjs/core';
-import { BunAdapter, type NestBunApplication } from '@nestbun/platform';
+import { BunAdapter, type NestBunApplication } from '@softtor/bunnest-platform';
 import { AppModule } from './app.module.js';
 
 const app = await NestFactory.create<NestBunApplication>(AppModule, new BunAdapter());

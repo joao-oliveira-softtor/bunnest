@@ -23,7 +23,7 @@ export interface BunServeOptions {
 
 /**
  * Takes WebSocket upgrades off the request path before Nest's router sees them.
- * Registered with `BunHttpServer.setUpgradeHook()`; `@nestbun/ws` installs one.
+ * Registered with `BunHttpServer.setUpgradeHook()`; `@softtor/bunnest-ws` installs one.
  */
 export interface BunUpgradeHook {
   /**

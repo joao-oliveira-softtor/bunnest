@@ -1,21 +1,41 @@
 name: Release
 # Publishes every public package under packages/* whose version is not on npm yet,
-# when a tag like v0.1.1 is pushed. Requires an NPM_TOKEN repository secret.
+# when a tag like v0.1.1 is pushed. Requires NPM_TOKEN in the `npm` environment, whose
+# deployment policy only admits v* tags, so no other workflow or ref can read it.
 on:
   push:
     tags: ['v*']
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: npm
     permissions:
       contents: write
       id-token: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # Publishing is irreversible: only a tag for the released version on a commit already on main.
+      - name: Guard the tag
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          version=$(node -p "require('./packages/platform/package.json').version")
+          if [ "${TAG#v}" != "$version" ]; then
+            echo "::error::Tag $TAG does not match packages/platform/package.json version $version"
+            exit 1
+          fi
+          git fetch origin main
+          if ! git merge-base --is-ancestor HEAD origin/main; then
+            echo "::error::Tag $TAG points at a commit that is not on main"
+            exit 1
+          fi
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
-      - run: bun run test
+      # Build first: the generator test installs the packed adapter, which ships dist/.
       - run: bun run build
+      - run: bun run test
       - name: Publish changed packages
         run: bun run scripts/publish.ts
         env:

@@ -1,12 +1,12 @@
 {
-  "name": "@nestbun/bench",
+  "name": "@softtor/bunnest-bench",
   "private": true,
   "type": "module",
   "scripts": {
     "bench": "bun run bench.ts"
   },
   "dependencies": {
-    "@nestbun/platform": "workspace:*",
+    "@softtor/bunnest-platform": "workspace:*",
     "@nestjs/common": "12.3.2",
     "@nestjs/core": "12.3.2",
     "@nestjs/platform-express": "12.3.2",

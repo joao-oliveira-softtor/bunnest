@@ -1,6 +1,6 @@
 ---
 title: Roadmap
-description: What is planned for nestbun after the HTTP adapter.
+description: What is planned for bunnest after the HTTP adapter.
 ---
 
 ## Next
@@ -9,7 +9,7 @@ description: What is planned for nestbun after the HTTP adapter.
 
 ## Later
 
-- Make `--adapter bun` the default in `@nestbun/create` once multipart lands.
+- Make `--adapter bun` the default in `@softtor/create-bunnest` once multipart lands.
 - Backpressure on the streaming path (respect `ReadableStream` `desiredSize`).
 - `@nestjs/serve-static` and `@nestjs/graphql` compatibility passes.
 - HTTP/2 when `Bun.serve` exposes it.
@@ -19,4 +19,4 @@ description: What is planned for nestbun after the HTTP adapter.
 - Running on Node. The adapter is Bun-native on purpose.
 - Full Express middleware emulation. Anything beyond the documented compatible subset is out of scope.
 
-Track progress and vote on items in [GitHub issues](https://github.com/mguay22/nestbun/issues).
+Track progress and vote on items in [GitHub issues](https://github.com/joao-oliveira-softtor/bunnest/issues).

@@ -1,12 +1,12 @@
-# @nestbun/platform
+# @softtor/bunnest-platform
 
 Run [NestJS](https://nestjs.com) directly on [`Bun.serve()`](https://bun.com/docs/api/http). No Express, no `node:http`, no build step.
 
-**Docs:** https://mguay22.github.io/nestbun/docs/getting-started/
+**Docs:** https://joao-oliveira-softtor.github.io/bunnest/docs/getting-started/
 
 ```ts
 import { NestFactory } from '@nestjs/core';
-import { BunAdapter, type NestBunApplication } from '@nestbun/platform';
+import { BunAdapter, type NestBunApplication } from '@softtor/bunnest-platform';
 
 const app = await NestFactory.create<NestBunApplication>(AppModule, new BunAdapter());
 await app.listen(3000);
@@ -17,7 +17,7 @@ That is the whole migration. Controllers, pipes, guards, interceptors, filters, 
 ## Install
 
 ```bash
-bun add @nestbun/platform
+bun add @softtor/bunnest-platform
 ```
 
 Requires Bun ≥ 1.4 and NestJS ≥ 12. In a monorepo, keep a `tsconfig.json` at the root: Bun resolves it from the working directory, and without `experimentalDecorators` it compiles TC39 decorators, which Nest cannot use.
@@ -30,7 +30,7 @@ Requires Bun ≥ 1.4 and NestJS ≥ 12. In a monorepo, keep a `tsconfig.json` at
   |---|---:|---:|
   | `@nestjs/platform-express` | 93k req/s | 72k req/s |
   | `@nestjs/platform-fastify` | 116k req/s | 92k req/s |
-  | **`@nestbun/platform`** | **119k req/s** | **98k req/s** |
+  | **`@softtor/bunnest-platform`** | **119k req/s** | **98k req/s** |
 
   Raw `Bun.serve` with no framework does 157k on the same test. Apple M-series laptop, 64 connections, 3s runs, load generator in a separate process. Reproduce with `bun run bench` in the repo.
 
@@ -59,8 +59,8 @@ Requires Bun ≥ 1.4 and NestJS ≥ 12. In a monorepo, keep a `tsconfig.json` at
 | Unix socket listen | ✅ |
 | Security hooks (`useSecurityHeaders`, `enableCsrfProtection`) | ✅ via `AbstractHttpAdapter` |
 | `trustProxy` (`req.ip`, `req.ips`, `req.protocol`, `req.host` via `X-Forwarded-*`) | ✅ |
-| WebSocket gateways | ✅ [`@nestbun/ws`](https://mguay22.github.io/nestbun/docs/websockets/) (`BunWsAdapter`: one path per gateway, `{ event, data }` messages, pub/sub rooms, `messageParser`) |
-| Socket.IO gateways | ✅ [`@nestbun/socket.io`](https://mguay22.github.io/nestbun/docs/websockets/#socketio) (`BunIoAdapter`: namespaces, rooms, acks, middleware, `websocket` and `polling` on the HTTP port) |
+| WebSocket gateways | ✅ [`@softtor/bunnest-ws`](https://joao-oliveira-softtor.github.io/bunnest/docs/websockets/) (`BunWsAdapter`: one path per gateway, `{ event, data }` messages, pub/sub rooms, `messageParser`) |
+| Socket.IO gateways | ✅ [`@softtor/bunnest-socket.io`](https://joao-oliveira-softtor.github.io/bunnest/docs/websockets/#socketio) (`BunIoAdapter`: namespaces, rooms, acks, middleware, `websocket` and `polling` on the HTTP port) |
 | Multipart via the `@UploadedFile()` decorator | ⏳ planned |
 | Multipart via `req.native.formData()` (Web `Request`, limit via `serve.maxRequestBodySize`) | ✅ |
 
@@ -77,10 +77,10 @@ Requires Bun ≥ 1.4 and NestJS ≥ 12. In a monorepo, keep a `tsconfig.json` at
 | `cookie-parser` | ✅ `app.use(cookieParser(secret))`, `req.cookies` / `req.signedCookies` |
 | `cors` | ✅ used internally |
 | `@nestjs/serve-static` | ⚠️ untested; use `useStaticAssets` |
-| `@nestjs/platform-socket.io`, `@nestjs/platform-ws` | ❌ attach to a Node server (the adapter logs a warning when one does); use `BunWsAdapter` from `@nestbun/ws` and `BunIoAdapter` from `@nestbun/socket.io` instead |
+| `@nestjs/platform-socket.io`, `@nestjs/platform-ws` | ❌ attach to a Node server (the adapter logs a warning when one does); use `BunWsAdapter` from `@softtor/bunnest-ws` and `BunIoAdapter` from `@softtor/bunnest-socket.io` instead |
 | `supertest` | ❌ use `adapter.fetch()` |
 | `multer` / `@nestjs/platform-express` interceptors | ❌ Express-only |
-| Arbitrary Express middleware | ⚠️ see [Differences from Express](https://mguay22.github.io/nestbun/docs/differences-from-express/) |
+| Arbitrary Express middleware | ⚠️ see [Differences from Express](https://joao-oliveira-softtor.github.io/bunnest/docs/differences-from-express/) |
 
 ## Options
 

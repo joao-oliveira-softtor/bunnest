@@ -10,7 +10,7 @@ supertest needs a Node `http.Server`, which does not exist on Bun's native serve
 ```ts title="users.e2e.test.ts"
 import { afterAll, beforeAll, expect, it } from 'bun:test';
 import { Test } from '@nestjs/testing';
-import { BunAdapter } from '@nestbun/platform';
+import { BunAdapter } from '@softtor/bunnest-platform';
 import { AppModule } from '../src/app.module.js';
 
 const adapter = new BunAdapter();

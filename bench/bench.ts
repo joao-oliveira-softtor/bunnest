@@ -9,7 +9,7 @@
 import 'reflect-metadata';
 import { Body, Controller, Get, Module, Param, Post } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { BunAdapter, BunRequest, BunResponse, Router } from '@nestbun/platform';
+import { BunAdapter, BunRequest, BunResponse, Router } from '@softtor/bunnest-platform';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 

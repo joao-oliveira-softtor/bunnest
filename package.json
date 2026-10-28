@@ -1,5 +1,5 @@
 {
-  "name": "nestbun-monorepo",
+  "name": "bunnest-monorepo",
   "private": true,
   "workspaces": [
     "packages/*",
@@ -9,8 +9,8 @@
   ],
   "scripts": {
     "test": "bun test packages/platform packages/ws packages/socket.io packages/create/test scripts",
-    "typecheck": "bun run --filter '@nestbun/platform' --filter '@nestbun/ws' --filter '@nestbun/socket.io' --filter '@nestbun/create' --filter '@nestbun/example-basic' typecheck",
-    "build": "bun run --filter '@nestbun/platform' --filter '@nestbun/ws' --filter '@nestbun/socket.io' --filter '@nestbun/create' --filter '@nestbun/www' build",
+    "typecheck": "bun run --filter '@softtor/bunnest-platform' --filter '@softtor/bunnest-ws' --filter '@softtor/bunnest-socket.io' --filter '@softtor/create-bunnest' --filter '@softtor/bunnest-example-basic' typecheck",
+    "build": "bun run --filter '@softtor/bunnest-platform' --filter '@softtor/bunnest-ws' --filter '@softtor/bunnest-socket.io' --filter '@softtor/create-bunnest' --filter '@softtor/bunnest-www' build",
     "lint": "oxlint --deny-warnings",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

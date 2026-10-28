@@ -1,7 +1,7 @@
 {
-  "name": "@nestbun/socket.io",
+  "name": "@softtor/bunnest-socket.io",
   "version": "0.4.0",
-  "description": "NestJS Socket.IO gateways on Bun.serve, sharing the HTTP port of @nestbun/platform",
+  "description": "NestJS Socket.IO gateways on Bun.serve, sharing the HTTP port of @softtor/bunnest-platform",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
@@ -36,16 +36,16 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mguay22/nestbun.git",
+    "url": "git+https://github.com/joao-oliveira-softtor/bunnest.git",
     "directory": "packages/socket.io"
   },
-  "homepage": "https://mguay22.github.io/nestbun/",
-  "bugs": "https://github.com/mguay22/nestbun/issues",
+  "homepage": "https://joao-oliveira-softtor.github.io/bunnest/",
+  "bugs": "https://github.com/joao-oliveira-softtor/bunnest/issues",
   "engines": {
     "bun": ">=1.4.0"
   },
   "peerDependencies": {
-    "@nestbun/platform": "0.4.0",
+    "@softtor/bunnest-platform": "0.4.0",
     "@nestjs/common": "^12.0.0",
     "@nestjs/core": "^12.0.0",
     "@nestjs/platform-socket.io": "^12.0.0",
@@ -57,7 +57,7 @@
     "@socket.io/bun-engine": "0.1.2"
   },
   "devDependencies": {
-    "@nestbun/platform": "workspace:*",
+    "@softtor/bunnest-platform": "workspace:*",
     "@nestjs/common": "12.3.2",
     "@nestjs/core": "12.3.2",
     "@nestjs/platform-socket.io": "12.3.2",

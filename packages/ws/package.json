@@ -1,7 +1,7 @@
 {
-  "name": "@nestbun/ws",
+  "name": "@softtor/bunnest-ws",
   "version": "0.4.0",
-  "description": "NestJS WebSocket gateways on Bun.serve, sharing the HTTP port of @nestbun/platform",
+  "description": "NestJS WebSocket gateways on Bun.serve, sharing the HTTP port of @softtor/bunnest-platform",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
@@ -35,23 +35,23 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mguay22/nestbun.git",
+    "url": "git+https://github.com/joao-oliveira-softtor/bunnest.git",
     "directory": "packages/ws"
   },
-  "homepage": "https://mguay22.github.io/nestbun/",
-  "bugs": "https://github.com/mguay22/nestbun/issues",
+  "homepage": "https://joao-oliveira-softtor.github.io/bunnest/",
+  "bugs": "https://github.com/joao-oliveira-softtor/bunnest/issues",
   "engines": {
     "bun": ">=1.4.0"
   },
   "peerDependencies": {
-    "@nestbun/platform": "0.4.0",
+    "@softtor/bunnest-platform": "0.4.0",
     "@nestjs/common": "^12.0.0",
     "@nestjs/core": "^12.0.0",
     "@nestjs/websockets": "^12.0.0",
     "rxjs": "^7.1.0"
   },
   "devDependencies": {
-    "@nestbun/platform": "workspace:*",
+    "@softtor/bunnest-platform": "workspace:*",
     "@nestjs/common": "12.3.2",
     "@nestjs/core": "12.3.2",
     "@nestjs/testing": "12.3.2",

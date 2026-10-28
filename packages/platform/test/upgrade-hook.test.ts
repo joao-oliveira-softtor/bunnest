@@ -128,7 +128,7 @@ describe('BunHttpServer upgrade hook', () => {
   });
 
   it('works over a unix socket', async () => {
-    const socketPath = join(await mkdtemp(join(tmpdir(), 'nestbun-ws-')), 'app.sock');
+    const socketPath = join(await mkdtemp(join(tmpdir(), 'bunnest-ws-')), 'app.sock');
     const adapter = new BunAdapter();
     const app = await NestFactory.create<NestBunApplication>(RootModule, adapter, {
       logger: false,

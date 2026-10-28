@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://mguay22.github.io/nestbun/sitemap-index.xml
+Sitemap: https://joao-oliveira-softtor.github.io/bunnest/sitemap-index.xml

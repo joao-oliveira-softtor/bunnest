@@ -1,15 +1,15 @@
-# @nestbun/socket.io
+# @softtor/bunnest-socket.io
 
-NestJS Socket.IO gateways on `Bun.serve`, on the same port as the HTTP app. It is the counterpart of `@nestjs/platform-socket.io` for [`@nestbun/platform`](https://www.npmjs.com/package/@nestbun/platform), built on [`@socket.io/bun-engine`](https://github.com/socketio/bun-engine): gateways, namespaces, rooms, acknowledgements, `@SubscribeMessage()`, guards, pipes, interceptors and exception filters work unchanged.
+NestJS Socket.IO gateways on `Bun.serve`, on the same port as the HTTP app. It is the counterpart of `@nestjs/platform-socket.io` for [`@softtor/bunnest-platform`](https://www.npmjs.com/package/@softtor/bunnest-platform), built on [`@socket.io/bun-engine`](https://github.com/socketio/bun-engine): gateways, namespaces, rooms, acknowledgements, `@SubscribeMessage()`, guards, pipes, interceptors and exception filters work unchanged.
 
 ```bash
-bun add @nestbun/socket.io @nestjs/websockets @nestjs/platform-socket.io socket.io
+bun add @softtor/bunnest-socket.io @nestjs/websockets @nestjs/platform-socket.io socket.io
 ```
 
 ```ts
 import { NestFactory } from '@nestjs/core';
-import { BunAdapter, type NestBunApplication } from '@nestbun/platform';
-import { BunIoAdapter } from '@nestbun/socket.io';
+import { BunAdapter, type NestBunApplication } from '@softtor/bunnest-platform';
+import { BunIoAdapter } from '@softtor/bunnest-socket.io';
 import { AppModule } from './app.module.js';
 
 const app = await NestFactory.create<NestBunApplication>(AppModule, new BunAdapter());
@@ -45,7 +45,7 @@ export class ChatGateway {
 - **`handshake.url` is absolute** (`http://host/socket.io/?EIO=4...`).
 - **Polling bodies** are limited by Bun's `maxRequestBodySize` (the `BunAdapter` option) before `maxHttpBufferSize` is checked.
 - **`idleTimeout`** of `Bun.serve` must be at least `2 × pingInterval` (the default of 120 s covers the 25 s default), or long-polls are cut.
-- It does not run together with `BunWsAdapter` from `@nestbun/ws`: both need the one upgrade hook of the HTTP server, and the second to register throws.
+- It does not run together with `BunWsAdapter` from `@softtor/bunnest-ws`: both need the one upgrade hook of the HTTP server, and the second to register throws.
 - `@socket.io/bun-engine` is pre-1.0 (`0.x`) and is pinned to an exact version here.
 
 ## Security
