@@ -19,7 +19,7 @@ import { isPublished, publishOrder } from './release-target.js';
 
 type Package = { name: string; version: string; private?: boolean; files?: string[] };
 
-const root = join(import.meta.dirname, '..', 'packages');
+const packagesRoot = join(import.meta.dirname, '..', 'packages');
 
 async function run(cmd: string[], cwd?: string): Promise<string> {
   const proc = Bun.spawn(cmd, { cwd, stdout: 'pipe', stderr: 'inherit' });
@@ -29,8 +29,8 @@ async function run(cmd: string[], cwd?: string): Promise<string> {
   return out;
 }
 
-async function onNpm(pkg: Pick<Package, 'name' | 'version'>): Promise<boolean> {
-  const view = Bun.spawn(['npm', 'view', `${pkg.name}@${pkg.version}`, 'version'], {
+async function onNpm(pkg: Pick<Package, 'name' | 'version'>, npm: string): Promise<boolean> {
+  const view = Bun.spawn([npm, 'view', `${pkg.name}@${pkg.version}`, 'version'], {
     stdout: 'pipe',
     stderr: 'pipe',
   });
@@ -38,7 +38,7 @@ async function onNpm(pkg: Pick<Package, 'name' | 'version'>): Promise<boolean> {
   return isPublished(code, await new Response(view.stdout).text(), pkg.version);
 }
 
-async function pack(out: string): Promise<void> {
+export async function pack(out: string, root = packagesRoot): Promise<void> {
   await mkdir(out, { recursive: true });
   const packages = new Map<string, Package>();
   for (const entry of await readdir(root, { withFileTypes: true })) {
@@ -72,17 +72,18 @@ async function tarballs(dir: string): Promise<string[]> {
     .map((file) => resolve(dir, file));
 }
 
-async function publish(dir: string): Promise<void> {
+/** `npm` is the command to run; tests pass a fake one so they can never reach the registry. */
+export async function publish(dir: string, npm = 'npm'): Promise<void> {
   const files = await tarballs(dir);
   if (files.length === 0) throw new Error(`no tarballs in ${dir}`);
   for (const tarball of files) {
     const pkg: Package = JSON.parse(await run(['tar', '-xOzf', tarball, 'package/package.json']));
-    if (await onNpm(pkg)) {
+    if (await onNpm(pkg, npm)) {
       console.log(`skip    ${pkg.name}@${pkg.version} (already on npm)`);
       continue;
     }
     console.log(`publish ${pkg.name}@${pkg.version}`);
-    await run(['npm', 'publish', tarball, '--access', 'public']);
+    await run([npm, 'publish', tarball, '--access', 'public']);
   }
 }
 
@@ -103,17 +104,19 @@ function summary(json: string): string {
   return `dry-run ${info!.name}@${info!.version} (${info!.entryCount} files)`;
 }
 
-const [command, dir = ''] = process.argv.slice(2);
-const usage = 'usage: publish.ts pack <dir> | publish <dir> | --dry-run';
-switch (command) {
-  case '--dry-run':
-    await dryRun();
-    break;
-  case 'pack':
-  case 'publish':
-    if (!dir) throw new Error(usage);
-    await (command === 'pack' ? pack : publish)(resolve(dir));
-    break;
-  default:
-    throw new Error(usage);
+if (import.meta.main) {
+  const [command, dir = ''] = process.argv.slice(2);
+  const usage = 'usage: publish.ts pack <dir> | publish <dir> | --dry-run';
+  switch (command) {
+    case '--dry-run':
+      await dryRun();
+      break;
+    case 'pack':
+    case 'publish':
+      if (!dir) throw new Error(usage);
+      await (command === 'pack' ? pack : publish)(resolve(dir));
+      break;
+    default:
+      throw new Error(usage);
+  }
 }
