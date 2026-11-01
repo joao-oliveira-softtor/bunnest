@@ -1,5 +1,11 @@
 import { describe, expect, test } from 'bun:test';
-import { bumpInternalDeps, isPublished, releaseBlocker, releaseTarget } from './release-target.js';
+import {
+  bumpInternalDeps,
+  isPublished,
+  publishOrder,
+  releaseBlocker,
+  releaseTarget,
+} from './release-target.js';
 
 describe('releaseTarget', () => {
   test('sem env, mantém o comportamento do upstream', () => {
@@ -98,5 +104,19 @@ describe('isPublished', () => {
   });
   test('publica quando o npm devolve outra versão', () => {
     expect(isPublished(0, '0.1.2\n', '0.2.0')).toBe(false);
+  });
+});
+
+describe('publishOrder', () => {
+  test('publica o platform antes dos pacotes que fixam a versão dele, e o gerador por último', () => {
+    expect(publishOrder(['ws', 'create', 'socket.io', 'platform'])).toEqual([
+      'platform',
+      'ws',
+      'socket.io',
+      'create',
+    ]);
+  });
+  test('recusa pacote público sem lugar na ordem, antes de publicar qualquer um', () => {
+    expect(() => publishOrder(['platform', 'graphql'])).toThrow('graphql');
   });
 });

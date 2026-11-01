@@ -45,3 +45,15 @@ export function bumpInternalDeps(source: string, names: string[], version: strin
 export function isPublished(exitCode: number, stdout: string, version: string): boolean {
   return exitCode === 0 && stdout.trim() === version;
 }
+
+/** ws, socket.io and create pin the exact platform version, so platform goes out first. */
+const PUBLISH_ORDER = ['platform', 'ws', 'socket.io', 'create'];
+
+/** Folder names of the public packages in publish order; throws on a package with no slot. */
+export function publishOrder(dirs: string[]): string[] {
+  const unknown = dirs.filter((dir) => !PUBLISH_ORDER.includes(dir));
+  if (unknown.length > 0) {
+    throw new Error(`no slot in PUBLISH_ORDER for ${unknown.join(', ')}; nothing was published`);
+  }
+  return PUBLISH_ORDER.filter((dir) => dirs.includes(dir));
+}
