@@ -57,6 +57,16 @@ describe('publish', () => {
     return { npm: join(bin, 'npm'), log };
   }
 
+  /** A packages/ folder whose public packages are `names`, all at 1.0.0. */
+  async function packagesOf(names: string[]): Promise<string> {
+    const root = join(tmp, 'packages');
+    for (const name of names) {
+      await mkdir(join(root, name), { recursive: true });
+      await writeFile(join(root, name, 'package.json'), JSON.stringify({ name, version: '1.0.0' }));
+    }
+    return root;
+  }
+
   async function tarball(dir: string, name: string, version: string): Promise<void> {
     const pkg = join(tmp, 'src', name.replace(/\W/g, ''));
     await mkdir(join(pkg, 'package'), { recursive: true });
@@ -78,7 +88,7 @@ describe('publish', () => {
     await tarball(dir, '01-b', '1.0.0');
     const { npm, log } = await fakeNpm('00-a@1.0.0');
 
-    await publish(dir, npm);
+    await publish(dir, npm, await packagesOf(['00-a', '01-b']));
 
     expect((await readFile(log, 'utf8')).trim().split('\n')).toEqual([
       'view 00-a@1.0.0 version',
@@ -87,7 +97,18 @@ describe('publish', () => {
     ]);
   });
 
+  test('recusa tarball cujo nome@versão não é de um pacote do checkout, antes de enviar qualquer um', async () => {
+    const dir = join(tmp, 'packed');
+    await mkdir(dir);
+    await tarball(dir, '00-a', '1.0.0');
+    await tarball(dir, '01-other', '1.0.0');
+    const { npm, log } = await fakeNpm('none@0.0.0');
+
+    await expect(publish(dir, npm, await packagesOf(['00-a']))).rejects.toThrow('01-other@1.0.0');
+    expect(await Bun.file(log).exists()).toBe(false);
+  });
+
   test('falha quando não há tarball, em vez de terminar sem publicar nada', async () => {
-    await expect(publish(tmp, '/nonexistent/npm')).rejects.toThrow('no tarballs');
+    await expect(publish(tmp, '/nonexistent/npm', tmp)).rejects.toThrow('no tarballs');
   });
 });

@@ -38,14 +38,20 @@ async function onNpm(pkg: Pick<Package, 'name' | 'version'>, npm: string): Promi
   return isPublished(code, await new Response(view.stdout).text(), pkg.version);
 }
 
-export async function pack(out: string, root = packagesRoot): Promise<void> {
-  await mkdir(out, { recursive: true });
+/** Public packages under `root`, by folder name. */
+async function publicPackages(root: string): Promise<Map<string, Package>> {
   const packages = new Map<string, Package>();
   for (const entry of await readdir(root, { withFileTypes: true })) {
     if (!entry.isDirectory()) continue;
     const pkg: Package = JSON.parse(await readFile(join(root, entry.name, 'package.json'), 'utf8'));
     if (!pkg.private) packages.set(entry.name, pkg);
   }
+  return packages;
+}
+
+export async function pack(out: string, root = packagesRoot): Promise<void> {
+  await mkdir(out, { recursive: true });
+  const packages = await publicPackages(root);
   for (const [index, dir] of publishOrder([...packages.keys()]).entries()) {
     // bun pm pack silently leaves out a missing "files" entry: an unbuilt dist/ must fail here.
     for (const file of packages.get(dir)!.files ?? []) await access(join(root, dir, file));
@@ -64,6 +70,8 @@ export async function pack(out: string, root = packagesRoot): Promise<void> {
   }
 }
 
+const id = (pkg: Pick<Package, 'name' | 'version'>) => `${pkg.name}@${pkg.version}`;
+
 async function tarballs(dir: string): Promise<string[]> {
   // Absolute paths: npm reads a relative `a/b.tgz` as a GitHub repository.
   return (await readdir(dir))
@@ -72,12 +80,24 @@ async function tarballs(dir: string): Promise<string[]> {
     .map((file) => resolve(dir, file));
 }
 
-/** `npm` is the command to run; tests pass a fake one so they can never reach the registry. */
-export async function publish(dir: string, npm = 'npm'): Promise<void> {
+/**
+ * `npm` is the command to run; tests pass a fake one so they can never reach the registry.
+ * The tarballs come from the pack job, where dependency code runs, so each one must match a
+ * package of this checkout by name and version before anything is uploaded: the fallback
+ * token can publish any @softtor package.
+ */
+export async function publish(dir: string, npm = 'npm', root = packagesRoot): Promise<void> {
   const files = await tarballs(dir);
   if (files.length === 0) throw new Error(`no tarballs in ${dir}`);
+  const expected = new Set([...(await publicPackages(root)).values()].map(id));
+  const packed: Package[] = [];
   for (const tarball of files) {
     const pkg: Package = JSON.parse(await run(['tar', '-xOzf', tarball, 'package/package.json']));
+    if (!expected.has(id(pkg))) throw new Error(`${id(pkg)} is not a package of this checkout`);
+    packed.push(pkg);
+  }
+  for (const [index, tarball] of files.entries()) {
+    const pkg = packed[index]!;
     if (await onNpm(pkg, npm)) {
       console.log(`skip    ${pkg.name}@${pkg.version} (already on npm)`);
       continue;
