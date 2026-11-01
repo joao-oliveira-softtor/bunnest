@@ -1,18 +1,18 @@
 name: Release
 # Publishes every public package under packages/* whose version is not on npm yet,
-# when a tag like v0.1.1 is pushed. npm trusted publishing (OIDC, through id-token: write)
-# authenticates packages configured for this workflow and the `npm` environment; NPM_TOKEN in
-# that environment, whose deployment policy only admits v* tags, is the fallback until then.
+# when a tag like v0.1.1 is pushed. Two jobs: `pack` installs, builds, tests and packs with no
+# credentials; `publish` runs no dependency code and is the only one that can authenticate to
+# npm. npm trusted publishing (OIDC, through id-token: write) covers packages configured for
+# this workflow and the `npm` environment; NPM_TOKEN in that environment, whose deployment
+# policy only admits v* tags, is the fallback until then.
 on:
   push:
     tags: ['v*']
 jobs:
-  publish:
+  pack:
     runs-on: ubuntu-latest
-    environment: npm
     permissions:
-      contents: write
-      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
         with:
@@ -38,14 +38,37 @@ jobs:
       # Build first: the generator test installs the packed adapter, which ships dist/.
       - run: bun run build
       - run: bun run test
+      - run: bun run scripts/publish.ts pack packed
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packed
+          path: packed/
+          if-no-files-found: error
+  publish:
+    needs: pack
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      # Only for scripts/: nothing is installed or built in this job.
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@v2
       # Trusted publishing needs npm >= 11.5.1 and Node >= 22.14; Node 24.0 shipped npm 11.3.
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
       - run: npm install -g npm@11.19.1
+      - uses: actions/download-artifact@v4
+        with:
+          name: packed
+          path: packed
       - name: Publish changed packages
-        run: bun run scripts/publish.ts
+        run: bun run scripts/publish.ts publish packed
         env:
           # Written to .npmrc by setup-node; npm only uses it when the OIDC exchange fails.
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
