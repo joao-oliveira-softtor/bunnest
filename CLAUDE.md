@@ -19,7 +19,7 @@ bun run build          # platform + create + docs site
 bun run lint           # oxlint; warnings fail
 bun run format         # prettier --write (format:check to verify)
 bun run typecheck      # platform, create, examples/basic
-bun run test           # platform + create test suites
+bun run test           # every package's suites plus scripts/ (needs build first)
 bun test packages/platform/test/routing.test.ts   # one file
 bun test -t "name"                                # one test by name
 ```
@@ -28,13 +28,16 @@ Run `bun run build` before `bun run typecheck`: `examples/basic` type-checks aga
 
 CI (`.github/workflows/ci.yml`) runs build, lint, format:check, typecheck, test, then boots `examples/basic`, on ubuntu + macOS × Bun `latest` + `canary`. Run the same sequence before saying a change is done.
 
+`release.yml` only runs on a `v*` tag, so PR CI never exercises it: lint workflow changes with actionlint (`docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.7 -no-color .github/workflows/release.yml`).
+
 Other:
 
 ```bash
 cd examples/basic && bun dev              # http://localhost:3000/cats
 bun run --filter '@softtor/bunnest-www' dev       # docs site
-bun run --filter '@softtor/bunnest-bench' bench   # ~1 minute benchmark, prints a markdown table
+bun run --filter '@softtor/bunnest-bench' bench   # ~1 minute benchmark, prints a markdown table; publish numbers only from one run on bare metal with `oha` (under WSL the fetch loader caps near raw Bun.serve and runs vary ~20%)
 bun run release patch --dry-run           # preview a release
+bun run scripts/publish.ts --dry-run      # pack the four packages as release.yml would and list each tarball
 ```
 
 ## Layout
@@ -48,7 +51,7 @@ packages/create/src      generator CLI (index.ts) and scaffolding logic (scaffol
 packages/create/templates/base          the generated project, runnable as-is
 packages/create/templates/bun-adapter   files copied on top for --adapter bun
 examples/basic           minimal app: REST + Zod validation + SSE
-bench/                   same app on express / fastify / bun adapters
+bench/                   same app on express / fastify / node / bun adapters
 apps/www                 Astro + Starlight; docs pages in src/content/docs/docs/
 scripts/                 publish.ts (used by release.yml), release.ts (bun run release)
 ```
@@ -69,7 +72,7 @@ The goal is behavior identical to `@nestjs/platform-express` (Express 5) unless 
 
 ## Conventions
 
-- **Tests.** Adapter behavior gets an integration test in `packages/platform/test` that boots a real Nest app on `BunAdapter` and asserts what a client observes (helpers in `test/helpers.ts`; `swagger.test.ts` is the pattern for ecosystem packages). Generator changes get a test in `packages/create/test`. Build Nest WebSocket adapters in tests from `app.getHttpServer()`, not `app`: a new workspace package can add another `@nestjs/core` copy to the isolated linker, and `AbstractWsAdapter`'s `instanceof NestApplication` then fails.
+- **Tests.** Adapter behavior gets an integration test in `packages/platform/test` that boots a real Nest app on `BunAdapter` and asserts what a client observes (helpers in `test/helpers.ts`; `swagger.test.ts` is the pattern for ecosystem packages). Generator changes get a test in `packages/create/test`. Build Nest WebSocket adapters in tests from `app.getHttpServer()`, not `app`: a new workspace package can add another `@nestjs/core` copy to the isolated linker, and `AbstractWsAdapter`'s `instanceof NestApplication` then fails. To fake a CLI in a test, pass its absolute path into the code under test (as `publish(dir, npm)` does): `Bun.spawn` ignores a `process.env.PATH` changed at runtime, so a PATH shim runs the real binary.
 - **Compatibility table.** Every ✅ row has a test behind it. A new row goes in both `apps/www/src/content/docs/docs/compatibility.md` and `packages/platform/README.md`.
 - **Docs.** User-visible changes update the pages in `apps/www/src/content/docs/docs/`. The root `README.md` is for users; contributor material goes in `CONTRIBUTING.md`.
 - **Dependencies.** Keep the adapter's runtime dependencies minimal (currently `cors`, `path-to-regexp`). `@softtor/bunnest-socket.io` adds `@socket.io/bun-engine` (0.x), pinned exactly: bump it deliberately. Pin dev dependencies exactly (`bun add -d -E`) and commit `bun.lock`; CI installs with `--frozen-lockfile`. NestJS is pinned in `packages/platform`, `packages/ws`, `packages/socket.io`, `examples/basic`, `bench` and `packages/create/templates`: bump them together.
