@@ -108,4 +108,15 @@ git checkout main && git pull
 git tag vX.Y.Z && git push origin vX.Y.Z     # publishes to npm
 ```
 
-The script bumps every public package (`@softtor/bunnest-platform`, `@softtor/bunnest-ws`, `@softtor/bunnest-socket.io` and `@softtor/create-bunnest`) to the same version, points the generator's `PLATFORM_VERSION` at it, runs the build and tests, commits and tags. The pushed tag triggers `release.yml`, which refuses a tag that does not match `packages/platform/package.json` or is not on `main`, then publishes what is not on npm yet (it needs `NPM_TOKEN`, an `@softtor` scope token stored in the `npm` environment, which only admits `v*` tags) and creates the GitHub release.
+The script bumps every public package (`@softtor/bunnest-platform`, `@softtor/bunnest-ws`, `@softtor/bunnest-socket.io` and `@softtor/create-bunnest`) to the same version, points the generator's `PLATFORM_VERSION` at it, runs the build and tests, commits and tags. The pushed tag triggers `release.yml`, which refuses a tag that does not match `packages/platform/package.json` or is not on `main`, then publishes what is not on npm yet (in the order `platform`, `ws`, `socket.io`, `create`) and creates the GitHub release.
+
+`release.yml` has two jobs: `pack` installs, builds, tests and packs (`scripts/publish.ts pack`) with no credentials, and `publish` uploads those tarballs (`scripts/publish.ts publish`) without installing or running any dependency code, so it is the only job that can authenticate to npm.
+
+Publishing uses npm trusted publishing: each package on npmjs.com trusts `release.yml` in the `npm` environment, and the `publish` job proves it with a short-lived GitHub OIDC token, so no npm secret is needed and each version published this way gets a provenance attestation (one published with the fallback token does not). A new trust configuration expires if nothing is published within 2 days, so create it on release day, logged in to npm with 2FA (npm ≥ 11.15):
+
+```bash
+npm trust github <package> --file release.yml --repo joao-oliveira-softtor/bunnest --env npm --allow-publish -y
+npm trust list <package>                     # must show the repo, release.yml, env npm and publish allowed
+```
+
+Until every package has it, `NPM_TOKEN` (an `@softtor` scope token in the `npm` environment, which only admits `v*` tags) is the fallback. A new package must exist on npm before it can be trusted: publish its first version by hand, with 2FA, or through the fallback token while it exists, and add its folder to `PUBLISH_ORDER` in `scripts/release-target.ts`.

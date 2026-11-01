@@ -1,19 +1,13 @@
 import { describe, expect, test } from 'bun:test';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import {
   bumpInternalDeps,
   isPublished,
-  missingRenames,
+  publishOrder,
   releaseBlocker,
   releaseTarget,
-  renameFor,
-  renameReadme,
-  renameReadmeAll,
-  stagedManifest,
 } from './release-target.js';
-
-const twoRenames = {
-  PUBLISH_RENAME: '@nestbun/platform=@softtor/nestbun-platform,@nestbun/ws=@softtor/nestbun-ws',
-};
 
 describe('releaseTarget', () => {
   test('sem env, mantém o comportamento do upstream', () => {
@@ -28,16 +22,10 @@ describe('releaseTarget', () => {
       }),
     ).toEqual({ remote: 'fork', branch: 'softtor', tagPrefix: 'softtor-v' });
   });
-});
-
-describe('renameFor', () => {
-  test('sem PUBLISH_RENAME, devolve o nome original', () => {
-    expect(renameFor('@nestbun/platform', {})).toBe('@nestbun/platform');
-  });
-  test('aplica o mapeamento só ao pacote citado', () => {
-    const env = { PUBLISH_RENAME: '@nestbun/platform=@softtor/nestbun-platform' };
-    expect(renameFor('@nestbun/platform', env)).toBe('@softtor/nestbun-platform');
-    expect(renameFor('@nestbun/create', env)).toBe('@nestbun/create');
+  test('prefixo vazio vale (tags sem "v"); remote e branch vazios caem no padrão', () => {
+    expect(
+      releaseTarget({ RELEASE_REMOTE: '', RELEASE_BRANCH: '', RELEASE_TAG_PREFIX: '' }),
+    ).toEqual({ remote: 'origin', branch: 'main', tagPrefix: '' });
   });
 });
 
@@ -70,58 +58,6 @@ describe('releaseBlocker', () => {
   });
   test('no dry-run, não exige branch alvo nem árvore limpa', () => {
     expect(releaseBlocker({ ...ok, dryRun: true, branch: 'x', dirty: true }, target)).toBeNull();
-  });
-});
-
-describe('stagedManifest', () => {
-  test('troca o nome e tira scripts e devDependencies, preservando o resto', () => {
-    const pkg = {
-      name: '@nestbun/platform',
-      version: '0.2.0',
-      files: ['dist', 'src', 'README.md'],
-      dependencies: { cors: '^2.8.5' },
-      scripts: { prepublishOnly: 'bun run build && bun test' },
-      devDependencies: { typescript: '7.0.2' },
-    };
-    expect(stagedManifest(pkg, '@softtor/nestbun-platform')).toEqual({
-      name: '@softtor/nestbun-platform',
-      version: '0.2.0',
-      files: ['dist', 'src', 'README.md'],
-      dependencies: { cors: '^2.8.5' },
-    });
-  });
-  test('renomeia também os pacotes irmãos em dependencies, peers e peerDependenciesMeta', () => {
-    const pkg = {
-      name: '@nestbun/ws',
-      version: '0.3.0',
-      peerDependencies: { '@nestbun/platform': '0.3.0', '@nestjs/websockets': '^12.0.0' },
-      peerDependenciesMeta: { '@nestbun/platform': { optional: false } },
-      dependencies: { '@nestbun/platform': '0.3.0' },
-      devDependencies: { '@nestbun/platform': 'workspace:*' },
-    };
-    expect(stagedManifest(pkg, '@softtor/nestbun-ws', twoRenames)).toEqual({
-      name: '@softtor/nestbun-ws',
-      version: '0.3.0',
-      peerDependencies: { '@softtor/nestbun-platform': '0.3.0', '@nestjs/websockets': '^12.0.0' },
-      peerDependenciesMeta: { '@softtor/nestbun-platform': { optional: false } },
-      dependencies: { '@softtor/nestbun-platform': '0.3.0' },
-    });
-  });
-});
-
-describe('missingRenames', () => {
-  const packages = [
-    { name: '@nestbun/platform' },
-    { name: '@nestbun/ws' },
-    { name: '@nestbun/create', private: true },
-  ];
-  test('sem PUBLISH_RENAME, não exige nada', () => {
-    expect(missingRenames(packages, {})).toEqual([]);
-  });
-  test('lista os pacotes públicos sem par e ignora os privados', () => {
-    const env = { PUBLISH_RENAME: '@nestbun/platform=@softtor/nestbun-platform' };
-    expect(missingRenames(packages, env)).toEqual(['@nestbun/ws']);
-    expect(missingRenames(packages, twoRenames)).toEqual([]);
   });
 });
 
@@ -178,29 +114,23 @@ describe('isPublished', () => {
   });
 });
 
-describe('renameReadme', () => {
-  const from = '@nestbun/platform';
-  const to = '@softtor/nestbun-platform';
-  test('troca todas as ocorrências do nome original', () => {
-    const readme = `bun add ${from}\nimport { BunAdapter } from '${from}';\n\`${from}/sub\``;
-    expect(renameReadme(readme, from, to)).toBe(
-      `bun add ${to}\nimport { BunAdapter } from '${to}';\n\`${to}/sub\``,
+describe('publishOrder', () => {
+  test('publica o platform antes dos pacotes que fixam a versão dele, e o gerador por último', () => {
+    expect(publishOrder(['ws', 'create', 'socket.io', 'platform'])).toEqual([
+      'platform',
+      'ws',
+      'socket.io',
+      'create',
+    ]);
+  });
+  test('recusa pacote público sem lugar na ordem, antes de publicar qualquer um', () => {
+    expect(() => publishOrder(['platform', 'graphql'])).toThrow('graphql');
+  });
+  test('tem lugar para cada pacote público de packages/', () => {
+    const root = join(import.meta.dirname, '..', 'packages');
+    const publicDirs = readdirSync(root).filter(
+      (dir) => !JSON.parse(readFileSync(join(root, dir, 'package.json'), 'utf8')).private,
     );
-  });
-  test('não altera nada quando o nome não aparece', () => {
-    expect(renameReadme('sem nome aqui', from, to)).toBe('sem nome aqui');
-  });
-  test('regra: não troca quando o nome é prefixo de outro pacote (seguido de [A-Za-z0-9_-])', () => {
-    const readme = `${from}-extra ${from}2 ${from}_x ${from}`;
-    expect(renameReadme(readme, from, to)).toBe(`${from}-extra ${from}2 ${from}_x ${to}`);
-  });
-  test('renameReadmeAll aplica todos os pares, inclusive o de um pacote irmão', () => {
-    const readme = 'bun add @nestbun/ws @nestbun/platform';
-    expect(renameReadmeAll(readme, twoRenames)).toBe(
-      'bun add @softtor/nestbun-ws @softtor/nestbun-platform',
-    );
-  });
-  test('fim de frase e fim de texto contam como fronteira', () => {
-    expect(renameReadme(`Use ${from}. ${from}`, from, to)).toBe(`Use ${to}. ${to}`);
+    expect(publishOrder(publicDirs)).toHaveLength(publicDirs.length);
   });
 });
