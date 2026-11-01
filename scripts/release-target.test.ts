@@ -20,6 +20,11 @@ describe('releaseTarget', () => {
       }),
     ).toEqual({ remote: 'fork', branch: 'softtor', tagPrefix: 'softtor-v' });
   });
+  test('prefixo vazio vale (tags sem "v"); remote e branch vazios caem no padrão', () => {
+    expect(
+      releaseTarget({ RELEASE_REMOTE: '', RELEASE_BRANCH: '', RELEASE_TAG_PREFIX: '' }),
+    ).toEqual({ remote: 'origin', branch: 'main', tagPrefix: '' });
+  });
 });
 
 describe('releaseBlocker', () => {
