@@ -1,4 +1,6 @@
 import { describe, expect, test } from 'bun:test';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import {
   bumpInternalDeps,
   isPublished,
@@ -123,5 +125,12 @@ describe('publishOrder', () => {
   });
   test('recusa pacote público sem lugar na ordem, antes de publicar qualquer um', () => {
     expect(() => publishOrder(['platform', 'graphql'])).toThrow('graphql');
+  });
+  test('tem lugar para cada pacote público de packages/', () => {
+    const root = join(import.meta.dirname, '..', 'packages');
+    const publicDirs = readdirSync(root).filter(
+      (dir) => !JSON.parse(readFileSync(join(root, dir, 'package.json'), 'utf8')).private,
+    );
+    expect(publishOrder(publicDirs)).toHaveLength(publicDirs.length);
   });
 });
