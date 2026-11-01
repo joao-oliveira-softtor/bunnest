@@ -51,7 +51,7 @@ describe('publish', () => {
     await mkdir(bin);
     await writeFile(
       join(bin, 'npm'),
-      `#!/bin/sh\necho "$*" >> ${log}\n[ "$1" = view ] || exit 0\n[ "$2" = "${published}" ] && echo "${published.split('@').pop()}" && exit 0\nexit 1\n`,
+      `#!/bin/sh\n[ "$1" = pack ] && exec npm "$@"\necho "$*" >> ${log}\n[ "$1" = view ] || exit 0\n[ "$2" = "${published}" ] && echo "${published.split('@').pop()}" && exit 0\nexit 1\n`,
     );
     await chmod(join(bin, 'npm'), 0o755);
     return { npm: join(bin, 'npm'), log };
@@ -106,6 +106,27 @@ describe('publish', () => {
 
     await expect(publish(dir, npm, await packagesOf(['00-a']))).rejects.toThrow('01-other@1.0.0');
     expect(await Bun.file(log).exists()).toBe(false);
+  });
+
+  test('lê o nome como o npm lê: uma segunda pasta no tarball não engana a conferência', async () => {
+    const dir = join(tmp, 'packed');
+    const src = join(tmp, 'src', 'two');
+    await mkdir(dir);
+    await mkdir(join(src, 'package'), { recursive: true });
+    await mkdir(join(src, 'evil'));
+    await writeFile(
+      join(src, 'package', 'package.json'),
+      JSON.stringify({ name: '00-a', version: '1.0.0' }),
+    );
+    await writeFile(
+      join(src, 'evil', 'package.json'),
+      JSON.stringify({ name: '01-evil', version: '1.0.0' }),
+    );
+    await Bun.spawn(['tar', '-czf', join(dir, '00-a.tgz'), '-C', src, 'package', 'evil']).exited;
+    const { npm, log } = await fakeNpm('none@0.0.0');
+
+    await expect(publish(dir, npm, await packagesOf(['00-a']))).rejects.toThrow('01-evil@1.0.0');
+    expect(await Bun.file(log).exists()).toBe(false); // no view, no publish
   });
 
   test('falha quando não há tarball, em vez de terminar sem publicar nada', async () => {

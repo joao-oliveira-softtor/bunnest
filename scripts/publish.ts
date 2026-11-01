@@ -90,14 +90,14 @@ export async function publish(dir: string, npm = 'npm', root = packagesRoot): Pr
   const files = await tarballs(dir);
   if (files.length === 0) throw new Error(`no tarballs in ${dir}`);
   const expected = new Set([...(await publicPackages(root)).values()].map(id));
-  const packed: Package[] = [];
+  const manifests: Package[] = [];
   for (const tarball of files) {
-    const pkg: Package = JSON.parse(await run(['tar', '-xOzf', tarball, 'package/package.json']));
+    const pkg = await packed(tarball, npm);
     if (!expected.has(id(pkg))) throw new Error(`${id(pkg)} is not a package of this checkout`);
-    packed.push(pkg);
+    manifests.push(pkg);
   }
   for (const [index, tarball] of files.entries()) {
-    const pkg = packed[index]!;
+    const pkg = manifests[index]!;
     if (await onNpm(pkg, npm)) {
       console.log(`skip    ${pkg.name}@${pkg.version} (already on npm)`);
       continue;
@@ -112,16 +112,24 @@ async function dryRun(): Promise<void> {
   try {
     await pack(out);
     for (const tarball of await tarballs(out)) {
-      console.log(summary(await run(['npm', 'pack', '--dry-run', '--json', tarball])));
+      const info = await packed(tarball, 'npm');
+      console.log(`dry-run ${id(info)} (${info.entryCount} files)`);
     }
   } finally {
     await rm(out, { recursive: true, force: true });
   }
 }
 
-function summary(json: string): string {
-  const [info] = JSON.parse(json) as { name: string; version: string; entryCount: number }[];
-  return `dry-run ${info!.name}@${info!.version} (${info!.entryCount} files)`;
+/**
+ * What npm itself reads from a tarball, offline. Not `tar -xO package/package.json`: npm strips
+ * the first folder of every entry, so a later `other/package.json` would win over it.
+ */
+async function packed(
+  tarball: string,
+  npm: string,
+): Promise<{ name: string; version: string; entryCount: number }> {
+  const [info] = JSON.parse(await run([npm, 'pack', '--dry-run', '--json', tarball]));
+  return info;
 }
 
 if (import.meta.main) {
