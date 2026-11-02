@@ -30,6 +30,20 @@ BASELINES=0 ADAPTERS=bun,fastify bun run bench
 DURATION=10 CONCURRENCY=128 bun run bench
 ```
 
+## Windows 11
+
+The same bench on Windows 11 Pro, outside WSL: Intel Core i7-12650H (10 cores, 16 threads), 32 GB, Bun 1.4.4, `oha` 1.16.0, 64 connections, 10-second runs. Median of three full runs.
+
+| Adapter | GET /users/:id | p99 | POST /users | p99 |
+| --- | ---: | ---: | ---: | ---: |
+| `platform-express` | 38,989 req/s | 3.00 ms | 31,070 req/s | 3.67 ms |
+| `platform-fastify` | 45,363 req/s | 2.54 ms | 38,613 req/s | 2.83 ms |
+| `@softtor/bunnest-platform` | 48,322 req/s | 2.62 ms | 41,393 req/s | 3.16 ms |
+| adapter router, no Nest | 58,909 req/s | 2.18 ms | 50,877 req/s | 2.40 ms |
+| `Bun.serve`, no framework | 70,842 req/s | 1.44 ms | 63,938 req/s | 1.68 ms |
+
+The ordering matches the chart above, with smaller gaps: the Bun adapter leads Fastify by 6-7% on both routes. Ordinary desktop apps were left running during the runs, and the first run's first three adapters came in 40-75% lower than the other two runs, so read these as an ordering rather than a ceiling.
+
 ## Reading the numbers
 
 - The gap between raw `Bun.serve` and any adapter is Nest itself: DI resolution, the execution context, guards and pipes, exception mapping. Nothing an adapter can remove.

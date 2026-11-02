@@ -115,14 +115,20 @@ async function oha(url: string, scenario: string) {
     '-c',
     String(CONCURRENCY),
     '--no-tui',
-    '-j',
+    '--output-format',
+    'json',
     '-m',
     method,
   ];
   if (method === 'POST')
     args.push('-H', 'content-type: application/json', '-d', '{"name":"Ada","age":36}');
-  const proc = Bun.spawn([...args, url + path], { stdout: 'pipe', stderr: 'ignore' });
+  const proc = Bun.spawn([...args, url + path], { stdout: 'pipe', stderr: 'inherit' });
   const out = JSON.parse(await new Response(proc.stdout).text());
+  // in-flight requests cut off by -z are reported as errors; they are not failures
+  const errors = Object.entries(out.errorDistribution ?? {})
+    .filter(([kind]) => kind !== 'aborted due to deadline')
+    .reduce((sum, [, n]) => sum + Number(n), 0);
+  if (errors) console.warn(`  (${errors} errors)`);
   return {
     rps: out.summary.requestsPerSec as number,
     p99: `${(out.latencyPercentiles.p99 * 1000).toFixed(2)}ms`,
