@@ -115,7 +115,8 @@ async function oha(url: string, scenario: string) {
     '-c',
     String(CONCURRENCY),
     '--no-tui',
-    '-j',
+    '--output-format',
+    'json',
     '-m',
     method,
   ];
