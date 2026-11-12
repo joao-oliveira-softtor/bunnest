@@ -16,7 +16,7 @@ One Nest controller with two routes:
 @Post()      create(@Body() body: unknown) { return { created: body }; }
 ```
 
-The same module is booted three times, once per adapter, all on Bun. Two baselines bracket the results: raw `Bun.serve` returning the same JSON with no framework, and the adapter's router alone without Nest.
+The same module is booted once per adapter, all on Bun. The chart covers Express, Fastify and the Bun adapter; the script also runs `@nestjs/platform-node` (NestJS 12.3+, `ADAPTERS=node`), which joins the chart after a bare-metal run. Two baselines bracket the results: raw `Bun.serve` returning the same JSON with no framework, and the adapter's router alone without Nest.
 
 ## How
 
