@@ -6,7 +6,7 @@ description: What is planned for bunnest after the HTTP adapter.
 ## Next
 
 - **Multipart uploads**: `@UploadedFile()` / `@UploadedFiles()` backed by `Request.formData()`, with size and count limits. Reference behavior: Express with multer, and `@nestjs/platform-node`, which ships multer too.
-- **Close the gap with `@nestjs/platform-node`**: NestJS 12.3's `node:http` adapter, run on Bun with the same app, landed in the same range as this adapter in our first runs, sometimes ahead on POST. Profile routing (it uses `find-my-way`) and body reading, and bring over what fits before claiming a lead.
+- **Measure against `@nestjs/platform-node`**: NestJS 12.3's `node:http` adapter also runs on Bun, and the benchmark script includes it (`ADAPTERS=node`). Measure it against this adapter on bare metal, then profile routing (it uses `find-my-way`) and body reading, and bring over what fits before claiming a lead.
 
 ## Later
 
