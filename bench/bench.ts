@@ -1,5 +1,5 @@
 /**
- * Same Nest app, three adapters, one runtime (Bun). Measures requests/second
+ * Same Nest app, four adapters, one runtime (Bun). Measures requests/second
  * for a JSON GET and a JSON POST using `oha` if installed, else a built-in
  * fetch-based load generator.
  *
@@ -12,6 +12,7 @@ import { NestFactory } from '@nestjs/core';
 import { BunAdapter, BunRequest, BunResponse, Router } from '@softtor/bunnest-platform';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
+import { NodeAdapter } from '@nestjs/platform-node';
 
 @Controller('users')
 class UsersController {
@@ -29,11 +30,12 @@ class AppModule {}
 
 const DURATION = Number(process.env.DURATION ?? 5);
 const CONCURRENCY = Number(process.env.CONCURRENCY ?? 64);
-const wanted = (process.env.ADAPTERS ?? 'express,fastify,bun').split(',');
+const wanted = (process.env.ADAPTERS ?? 'express,fastify,node,bun').split(',');
 
 const adapters: Record<string, () => any> = {
   express: () => new ExpressAdapter(),
   fastify: () => new FastifyAdapter(),
+  node: () => new NodeAdapter(),
   bun: () => new BunAdapter(),
 };
 

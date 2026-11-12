@@ -31,7 +31,7 @@ packages/ws         @softtor/bunnest-ws: WebSocket gateways on the HTTP port
 packages/socket.io  @softtor/bunnest-socket.io: Socket.IO gateways on the HTTP port
 packages/create     the generator; templates/base is the starter it copies
 examples/basic      minimal app: REST + Zod validation + SSE
-bench/              same app on express / fastify / bun adapters
+bench/              same app on express / fastify / node / bun adapters
 apps/www            landing page + docs (Astro + Starlight); pages are in src/content/docs/docs/
 ```
 
